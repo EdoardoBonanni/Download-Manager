@@ -1,17 +1,20 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox
+import os
+import model
 
 class Ui_mainWindow(object):
     def setupUi(self, mainWindow):
 
         # mainwindow
         mainWindow.setObjectName("mainWindow")
-        mainWindow.resize(800, 600)
-        mainWindow.setMinimumSize(QtCore.QSize(800, 600))
-        mainWindow.setBaseSize(QtCore.QSize(800, 600))
+        mainWindow.resize(900, 650)
+        mainWindow.setMinimumSize(QtCore.QSize(900, 650))
+        mainWindow.setBaseSize(QtCore.QSize(900, 650))
         font = QtGui.QFont()
         font.setPointSize(10)
         mainWindow.setFont(font)
+        fontLineEdit = QtGui.QFont()
+        fontLineEdit.setPointSize(8)
         icon_mainwindow = QtGui.QIcon()
         icon_mainwindow.addPixmap(QtGui.QPixmap("icon/download-icon-mainwindow.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         mainWindow.setWindowIcon(icon_mainwindow)
@@ -72,6 +75,7 @@ class Ui_mainWindow(object):
         self.horizontalLayout_Download.addItem(spacerItem_downloadLeft)
         self.lineEdit_Download = QtWidgets.QLineEdit(self.widget_download)
         self.lineEdit_Download.setObjectName("lineEdit_Download")
+        self.lineEdit_Download.setFont(fontLineEdit)
         self.horizontalLayout_Download.addWidget(self.lineEdit_Download)
         spacerItem_downloadRight = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_Download.addItem(spacerItem_downloadRight)
@@ -80,12 +84,11 @@ class Ui_mainWindow(object):
         self.button_Download.setObjectName("pushButton_Download")
         self.horizontalLayout_Download.addWidget(self.button_Download)
         self.horizontalLayout_Download.setStretch(0, 4)
-        self.horizontalLayout_Download.setStretch(1, 2)
-        self.horizontalLayout_Download.setStretch(2, 7)
+        self.horizontalLayout_Download.setStretch(2, 12)
         self.horizontalLayout_Download.setStretch(4, 2)
         self.gridLayout.addWidget(self.widget_download, 0, 0, 1, 1)
 
-        # widget_download
+        # widget_browse
         self.widget_browse = QtWidgets.QWidget(self.centralwidget)
         self.widget_browse.setObjectName("widget_browse")
         self.horizontalLayout_Browse = QtWidgets.QHBoxLayout(self.widget_browse)
@@ -96,9 +99,10 @@ class Ui_mainWindow(object):
         self.horizontalLayout_Browse.addWidget(self.label_chooseDirectory)
         spacerItem_browseLeft = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_Browse.addItem(spacerItem_browseLeft)
-        self.lineEdit_chooseDIrectory = QtWidgets.QLineEdit(self.widget_browse)
-        self.lineEdit_chooseDIrectory.setObjectName("lineEdit_chooseDIrectory")
-        self.horizontalLayout_Browse.addWidget(self.lineEdit_chooseDIrectory)
+        self.lineEdit_chooseDirectory = QtWidgets.QLineEdit(self.widget_browse)
+        self.lineEdit_chooseDirectory.setObjectName("lineEdit_chooseDirectory")
+        self.lineEdit_chooseDirectory.setFont(fontLineEdit)
+        self.horizontalLayout_Browse.addWidget(self.lineEdit_chooseDirectory)
         spacerItem_browseRight = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_Browse.addItem(spacerItem_browseRight)
         self.button_browse = QtWidgets.QPushButton(self.widget_browse)
@@ -106,8 +110,7 @@ class Ui_mainWindow(object):
         self.button_browse.setObjectName("pushButton_browse")
         self.horizontalLayout_Browse.addWidget(self.button_browse)
         self.horizontalLayout_Browse.setStretch(0, 4)
-        self.horizontalLayout_Browse.setStretch(1, 2)
-        self.horizontalLayout_Browse.setStretch(2, 7)
+        self.horizontalLayout_Browse.setStretch(2, 12)
         self.horizontalLayout_Browse.setStretch(4, 2)
         self.gridLayout.addWidget(self.widget_browse, 1, 0, 1, 1)
         mainWindow.setCentralWidget(self.centralwidget)
@@ -175,8 +178,18 @@ class Ui_mainWindow(object):
         self.menuAbout.addAction(self.actionHelp)
         self.menubar.addAction(self.menuAbout.menuAction())
 
+        self.searchInitialDir()
+
         self.retranslateUi(mainWindow)
         QtCore.QMetaObject.connectSlotsByName(mainWindow)
+
+        # choose directory event
+        self.button_browse.clicked.connect(self.chooseDirectory)
+        self.actionBrowse.triggered.connect(self.chooseDirectory)
+
+        # download event
+        self.button_Download.clicked.connect(self.download)
+        self.actionDownload.triggered.connect(self.download)
 
     def retranslateUi(self, mainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -185,7 +198,7 @@ class Ui_mainWindow(object):
         self.button_ResumeAll.setText(_translate("mainWindow", "Resume All"))
         self.button_InterruptAll.setText(_translate("mainWindow", "Interrupt All"))
         self.label_DownloadSpeed.setText(_translate("mainWindow", "N/A Kb/s"))
-        self.label_insertDownload.setText(_translate("mainWindow", "Insert URL Download"))
+        self.label_insertDownload.setText(_translate("mainWindow", "Insert URL File to Download"))
         self.button_Download.setText(_translate("mainWindow", "Download"))
         self.label_chooseDirectory.setText(_translate("mainWindow", "Choose directory to save files"))
         self.button_browse.setText(_translate("mainWindow", "Browse"))
@@ -196,14 +209,39 @@ class Ui_mainWindow(object):
         self.actionDownload.setStatusTip(_translate("mainWindow", "Download a file"))
         self.actionClose.setText(_translate("mainWindow", "&Close"))
         self.actionClose.setShortcut(_translate("mainWindow", "Ctrl+Z"))
+        self.actionClose.setStatusTip(_translate("mainWindow", "Close"))
         self.actionPause_All.setText(_translate("mainWindow", "&Pause All"))
         self.actionPause_All.setShortcut(_translate("mainWindow", "Ctrl+P"))
+        self.actionPause_All.setStatusTip(_translate("mainWindow", "Pause all downloads"))
         self.actionResume_All.setText(_translate("mainWindow", "&Resume All"))
         self.actionResume_All.setShortcut(_translate("mainWindow", "Ctrl+R"))
+        self.actionResume_All.setStatusTip(_translate("mainWindow", "Resume all downloads"))
         self.actionInterrupt_All.setText(_translate("mainWindow", "&Interrupt All"))
         self.actionInterrupt_All.setShortcut(_translate("mainWindow", "Ctrl+I"))
+        self.actionInterrupt_All.setStatusTip(_translate("mainWindow", "Interrupt all downloads"))
         self.actionBrowse.setText(_translate("mainWindow", "&Browse"))
         self.actionBrowse.setShortcut(_translate("mainWindow", "Ctrl+B"))
+        self.actionBrowse.setStatusTip(_translate("mainWindow", "Browse a file"))
         self.actionHelp.setText(_translate("mainWindow", "&Help"))
         self.actionHelp.setShortcut(_translate("mainWindow", "Ctrl+H"))
+        self.actionHelp.setStatusTip(_translate("mainWindow", "Help"))
+
+    def searchInitialDir(self):
+        currdir = os.getcwd()
+        currdir = currdir.replace('\\','/')
+        self.lineEdit_chooseDirectory.setText(currdir + '/downloads')
+
+    def chooseDirectory(self):
+        dir = self.lineEdit_chooseDirectory.text()
+        # print('Current directory Download:', dir)
+        directorypath = model.chooseDirectory(dir)
+        # print('New directory Download:', directorypath)
+        self.lineEdit_chooseDirectory.setText(directorypath)
+
+    def download(self):
+        self.lineEdit_Download.setText('https://www.freewebheaders.com/wp-content/gallery/holidays-size-800x200_1/thumbs/thumbs_unique-multicolor-indian-christmas-ornaments-banner-background-800x200.jpg')
+        link = self.lineEdit_Download.text()
+        if link != '':
+            dir = self.lineEdit_chooseDirectory.text()
+            model.downloadFile(link, dir)
 

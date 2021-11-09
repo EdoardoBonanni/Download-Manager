@@ -1,9 +1,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
-import model
+from model import Model
+from PyQt5.QtWidgets import QWidget
 
 class Ui_mainWindow(object):
     def setupUi(self, mainWindow):
+
+        self.model = Model
 
         # mainwindow
         mainWindow.setObjectName("mainWindow")
@@ -15,9 +18,25 @@ class Ui_mainWindow(object):
         mainWindow.setFont(font)
         fontLineEdit = QtGui.QFont()
         fontLineEdit.setPointSize(8)
+
+        # icon
         icon_mainwindow = QtGui.QIcon()
         icon_mainwindow.addPixmap(QtGui.QPixmap("icon/download-icon-mainwindow.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         mainWindow.setWindowIcon(icon_mainwindow)
+        iconDownload = QtGui.QIcon()
+        iconDownload.addPixmap(QtGui.QPixmap("icon/download.jpg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconExit = QtGui.QIcon()
+        iconExit.addPixmap(QtGui.QPixmap("icon/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconPause = QtGui.QIcon()
+        iconPause.addPixmap(QtGui.QPixmap("icon/pause.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconResume = QtGui.QIcon()
+        iconResume.addPixmap(QtGui.QPixmap("icon/resume.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconInterrupt = QtGui.QIcon()
+        iconInterrupt.addPixmap(QtGui.QPixmap("icon/interrupt.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconBrowse = QtGui.QIcon()
+        iconBrowse.addPixmap(QtGui.QPixmap("icon/browse.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconHelp = QtGui.QIcon()
+        iconHelp.addPixmap(QtGui.QPixmap("icon/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 
         # centralwidget and gridlayout
         self.centralwidget = QtWidgets.QWidget(mainWindow)
@@ -26,41 +45,47 @@ class Ui_mainWindow(object):
         self.gridLayout.setObjectName("gridLayout")
 
         # verticalLayout_ListDownload
-        self.verticalLayout_ListDownload = QtWidgets.QVBoxLayout()
+        self.widget_downloadList = QtWidgets.QWidget(self.centralwidget)
+        self.widget_downloadList.setObjectName("widget_downloadList")
+        self.verticalLayout_ListDownload = QtWidgets.QVBoxLayout(self.widget_downloadList)
+        self.verticalLayout_ListDownload.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_ListDownload.setObjectName("verticalLayout_ListDownload")
-        spacerVertical_downloadList = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_ListDownload.addItem(spacerVertical_downloadList)
-        self.gridLayout.addLayout(self.verticalLayout_ListDownload, 2, 0, 1, 1)
+        self.spacerVertical_downloadList = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_ListDownload.addItem(self.spacerVertical_downloadList)
+        self.gridLayout.addWidget(self.widget_downloadList, 2, 0, 1, 1)
 
         # horizontalLayout
         ## widget_button_speed
-        self.widget_button_speed = QtWidgets.QWidget(self.centralwidget)
-        self.widget_button_speed.setObjectName("widget_button_speed")
-        self.horizontalLayout_Button_Speed = QtWidgets.QHBoxLayout(self.widget_button_speed)
-        self.horizontalLayout_Button_Speed.setContentsMargins(10, 10, 10, 10)
-        self.horizontalLayout_Button_Speed.setObjectName("horizontalLayout_Button_Speed")
-        self.button_PauseAll = QtWidgets.QPushButton(self.widget_button_speed)
-        self.button_PauseAll.setMaximumSize(QtCore.QSize(138, 24))
-        self.button_PauseAll.setObjectName("button_PauseAll")
-        self.horizontalLayout_Button_Speed.addWidget(self.button_PauseAll)
-        self.button_ResumeAll = QtWidgets.QPushButton(self.widget_button_speed)
-        self.button_ResumeAll.setMaximumSize(QtCore.QSize(137, 24))
-        self.button_ResumeAll.setObjectName("button_ResumeAll")
-        self.horizontalLayout_Button_Speed.addWidget(self.button_ResumeAll)
-        self.button_InterruptAll = QtWidgets.QPushButton(self.widget_button_speed)
-        self.button_InterruptAll.setMaximumSize(QtCore.QSize(138, 24))
-        self.button_InterruptAll.setObjectName("button_InterruptAll")
-        self.horizontalLayout_Button_Speed.addWidget(self.button_InterruptAll)
-        spacerItem_Button_Speed = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_Button_Speed.addItem(spacerItem_Button_Speed)
-        self.label_DownloadSpeed = QtWidgets.QLabel(self.widget_button_speed)
-        self.label_DownloadSpeed.setObjectName("label_DownloadSpeed")
-        self.horizontalLayout_Button_Speed.addWidget(self.label_DownloadSpeed)
-        self.horizontalLayout_Button_Speed.setStretch(0, 2)
-        self.horizontalLayout_Button_Speed.setStretch(1, 2)
-        self.horizontalLayout_Button_Speed.setStretch(2, 2)
-        self.horizontalLayout_Button_Speed.setStretch(3, 4)
-        self.gridLayout.addWidget(self.widget_button_speed, 3, 0, 1, 1)
+        # self.widget_button_speed = QtWidgets.QWidget(self.centralwidget)
+        # self.widget_button_speed.setObjectName("widget_button_speed")
+        # self.horizontalLayout_Button_Speed = QtWidgets.QHBoxLayout(self.widget_button_speed)
+        # self.horizontalLayout_Button_Speed.setContentsMargins(10, 10, 10, 10)
+        # self.horizontalLayout_Button_Speed.setObjectName("horizontalLayout_Button_Speed")
+        # self.button_PauseAll = QtWidgets.QPushButton(self.widget_button_speed)
+        # self.button_PauseAll.setMaximumSize(QtCore.QSize(138, 24))
+        # self.button_PauseAll.setObjectName("button_PauseAll")
+        # self.button_PauseAll.setIcon(iconPause)
+        # self.horizontalLayout_Button_Speed.addWidget(self.button_PauseAll)
+        # self.button_ResumeAll = QtWidgets.QPushButton(self.widget_button_speed)
+        # self.button_ResumeAll.setMaximumSize(QtCore.QSize(137, 24))
+        # self.button_ResumeAll.setObjectName("button_ResumeAll")
+        # self.button_ResumeAll.setIcon(iconResume)
+        # self.horizontalLayout_Button_Speed.addWidget(self.button_ResumeAll)
+        # self.button_InterruptAll = QtWidgets.QPushButton(self.widget_button_speed)
+        # self.button_InterruptAll.setMaximumSize(QtCore.QSize(138, 24))
+        # self.button_InterruptAll.setObjectName("button_InterruptAll")
+        # self.button_InterruptAll.setIcon(iconInterrupt)
+        # self.horizontalLayout_Button_Speed.addWidget(self.button_InterruptAll)
+        # spacerItem_Button_Speed = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        # self.horizontalLayout_Button_Speed.addItem(spacerItem_Button_Speed)
+        # self.label_DownloadSpeed = QtWidgets.QLabel(self.widget_button_speed)
+        # self.label_DownloadSpeed.setObjectName("label_DownloadSpeed")
+        # self.horizontalLayout_Button_Speed.addWidget(self.label_DownloadSpeed)
+        # self.horizontalLayout_Button_Speed.setStretch(0, 2)
+        # self.horizontalLayout_Button_Speed.setStretch(1, 2)
+        # self.horizontalLayout_Button_Speed.setStretch(2, 2)
+        # self.horizontalLayout_Button_Speed.setStretch(3, 4)
+        # self.gridLayout.addWidget(self.widget_button_speed, 3, 0, 1, 1)
 
         # widget_download
         self.widget_download = QtWidgets.QWidget(self.centralwidget)
@@ -114,8 +139,8 @@ class Ui_mainWindow(object):
         self.horizontalLayout_Browse.setStretch(4, 2)
         self.gridLayout.addWidget(self.widget_browse, 1, 0, 1, 1)
         mainWindow.setCentralWidget(self.centralwidget)
-        self.button_ResumeAll.setStyleSheet('background-color: #008500; border-color: #008500; color:#fff')
-        self.button_InterruptAll.setStyleSheet('background-color: #D60000; border-color: #D60000; color:#fff')
+        # self.button_ResumeAll.setStyleSheet('background-color: #008500; border-color: #008500; color:#fff')
+        # self.button_InterruptAll.setStyleSheet('background-color: #D60000; border-color: #D60000; color:#fff')
         self.button_Download.setStyleSheet('background-color: #ffc107; border-color: #ffc107')
         self.button_browse.setStyleSheet('background-color: #ffc107; border-color: #ffc107')
 
@@ -132,39 +157,25 @@ class Ui_mainWindow(object):
         self.statusbar.setObjectName("statusbar")
         mainWindow.setStatusBar(self.statusbar)
         self.actionDownload = QtWidgets.QAction(mainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("icon/download.jpg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionDownload.setIcon(icon)
+        self.actionDownload.setIcon(iconDownload)
         self.actionDownload.setObjectName("actionDownload")
         self.actionClose = QtWidgets.QAction(mainWindow)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("icon/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionClose.setIcon(icon1)
+        self.actionClose.setIcon(iconExit)
         self.actionClose.setObjectName("actionExit")
         self.actionPause_All = QtWidgets.QAction(mainWindow)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("icon/pause.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPause_All.setIcon(icon2)
+        self.actionPause_All.setIcon(iconPause)
         self.actionPause_All.setObjectName("actionPause_All")
         self.actionResume_All = QtWidgets.QAction(mainWindow)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("icon/resume.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionResume_All.setIcon(icon3)
+        self.actionResume_All.setIcon(iconResume)
         self.actionResume_All.setObjectName("actionResume_All")
         self.actionInterrupt_All = QtWidgets.QAction(mainWindow)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("icon/interrupt.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionInterrupt_All.setIcon(icon4)
+        self.actionInterrupt_All.setIcon(iconInterrupt)
         self.actionInterrupt_All.setObjectName("actionInterrupt_All")
         self.actionBrowse = QtWidgets.QAction(mainWindow)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap("icon/browse.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionBrowse.setIcon(icon5)
+        self.actionBrowse.setIcon(iconBrowse)
         self.actionBrowse.setObjectName("actionBrowse")
         self.actionHelp = QtWidgets.QAction(mainWindow)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap("icon/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionHelp.setIcon(icon6)
+        self.actionHelp.setIcon(iconHelp)
         self.actionHelp.setObjectName("actionHelp")
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionDownload)
@@ -178,26 +189,16 @@ class Ui_mainWindow(object):
         self.menuAbout.addAction(self.actionHelp)
         self.menubar.addAction(self.menuAbout.menuAction())
 
-        self.searchInitialDir()
-
         self.retranslateUi(mainWindow)
         QtCore.QMetaObject.connectSlotsByName(mainWindow)
-
-        # choose directory event
-        self.button_browse.clicked.connect(self.chooseDirectory)
-        self.actionBrowse.triggered.connect(self.chooseDirectory)
-
-        # download event
-        self.button_Download.clicked.connect(self.download)
-        self.actionDownload.triggered.connect(self.download)
 
     def retranslateUi(self, mainWindow):
         _translate = QtCore.QCoreApplication.translate
         mainWindow.setWindowTitle(_translate("mainWindow", "Download Manager"))
-        self.button_PauseAll.setText(_translate("mainWindow", "Pause All"))
-        self.button_ResumeAll.setText(_translate("mainWindow", "Resume All"))
-        self.button_InterruptAll.setText(_translate("mainWindow", "Interrupt All"))
-        self.label_DownloadSpeed.setText(_translate("mainWindow", "N/A Kb/s"))
+        # self.button_PauseAll.setText(_translate("mainWindow", "Pause All"))
+        # self.button_ResumeAll.setText(_translate("mainWindow", "Resume All"))
+        # self.button_InterruptAll.setText(_translate("mainWindow", "Interrupt All"))
+        # self.label_DownloadSpeed.setText(_translate("mainWindow", "N/A Kb/s"))
         self.label_insertDownload.setText(_translate("mainWindow", "Insert URL File to Download"))
         self.button_Download.setText(_translate("mainWindow", "Download"))
         self.label_chooseDirectory.setText(_translate("mainWindow", "Choose directory to save files"))
@@ -225,23 +226,4 @@ class Ui_mainWindow(object):
         self.actionHelp.setText(_translate("mainWindow", "&Help"))
         self.actionHelp.setShortcut(_translate("mainWindow", "Ctrl+H"))
         self.actionHelp.setStatusTip(_translate("mainWindow", "Help"))
-
-    def searchInitialDir(self):
-        currdir = os.getcwd()
-        currdir = currdir.replace('\\','/')
-        self.lineEdit_chooseDirectory.setText(currdir + '/downloads')
-
-    def chooseDirectory(self):
-        dir = self.lineEdit_chooseDirectory.text()
-        # print('Current directory Download:', dir)
-        directorypath = model.chooseDirectory(dir)
-        # print('New directory Download:', directorypath)
-        self.lineEdit_chooseDirectory.setText(directorypath)
-
-    def download(self):
-        self.lineEdit_Download.setText('https://www.freewebheaders.com/wp-content/gallery/holidays-size-800x200_1/thumbs/thumbs_unique-multicolor-indian-christmas-ornaments-banner-background-800x200.jpg')
-        link = self.lineEdit_Download.text()
-        if link != '':
-            dir = self.lineEdit_chooseDirectory.text()
-            model.downloadFile(link, dir)
 

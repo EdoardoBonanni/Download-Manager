@@ -1,12 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import os
-from model import Model
-from PyQt5.QtWidgets import QWidget
 
 class Ui_mainWindow(object):
     def setupUi(self, mainWindow):
-
-        self.model = Model
 
         # mainwindow
         mainWindow.setObjectName("mainWindow")
@@ -44,48 +39,66 @@ class Ui_mainWindow(object):
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
 
-        # verticalLayout_ListDownload
-        self.widget_downloadList = QtWidgets.QWidget(self.centralwidget)
-        self.widget_downloadList.setObjectName("widget_downloadList")
-        self.verticalLayout_ListDownload = QtWidgets.QVBoxLayout(self.widget_downloadList)
-        self.verticalLayout_ListDownload.setContentsMargins(10, 10, 10, 10)
-        self.verticalLayout_ListDownload.setObjectName("verticalLayout_ListDownload")
+        # widget_containing_scrollArea and layout_containing_scrollArea
+        self.widget_containing_scrollArea = QtWidgets.QWidget(self.centralwidget)
+        self.widget_containing_scrollArea.setObjectName("widget_containing_scrollArea")
+        self.layout_containing_scrollArea = QtWidgets.QVBoxLayout(self.widget_containing_scrollArea)
+        self.layout_containing_scrollArea.setContentsMargins(10, 10, 10, 10)
+        self.layout_containing_scrollArea.setObjectName("layout_containing_scrollArea")
+        ## scrollArea
+        self.scrollArea = QtWidgets.QScrollArea()
+        # self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.scrollArea.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaLayout = QtWidgets.QHBoxLayout(self.scrollArea)
+        self.scrollAreaLayout.setContentsMargins(100, 100, 100, 100)
+        self.scrollAreaLayout.setObjectName("scrollAreaLayout")
+        ### scrollAreaWidgetContents and scrollAreaWidgetLayout
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 863, 437))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.scrollAreaWidgetLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.scrollAreaWidgetLayout.setObjectName("scrollAreaWidgetLayout")
+        ### verticalSpacer
         self.spacerVertical_downloadList = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_ListDownload.addItem(self.spacerVertical_downloadList)
-        self.gridLayout.addWidget(self.widget_downloadList, 2, 0, 1, 1)
+        #self.scrollAreaWidgetLayout.addItem(self.spacerVertical_downloadList)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.layout_containing_scrollArea.addWidget(self.scrollArea)
+        self.gridLayout.addWidget(self.widget_containing_scrollArea, 2, 0, 1, 1)
 
-        # horizontalLayout
-        ## widget_button_speed
-        # self.widget_button_speed = QtWidgets.QWidget(self.centralwidget)
-        # self.widget_button_speed.setObjectName("widget_button_speed")
-        # self.horizontalLayout_Button_Speed = QtWidgets.QHBoxLayout(self.widget_button_speed)
-        # self.horizontalLayout_Button_Speed.setContentsMargins(10, 10, 10, 10)
-        # self.horizontalLayout_Button_Speed.setObjectName("horizontalLayout_Button_Speed")
-        # self.button_PauseAll = QtWidgets.QPushButton(self.widget_button_speed)
-        # self.button_PauseAll.setMaximumSize(QtCore.QSize(138, 24))
-        # self.button_PauseAll.setObjectName("button_PauseAll")
-        # self.button_PauseAll.setIcon(iconPause)
-        # self.horizontalLayout_Button_Speed.addWidget(self.button_PauseAll)
-        # self.button_ResumeAll = QtWidgets.QPushButton(self.widget_button_speed)
-        # self.button_ResumeAll.setMaximumSize(QtCore.QSize(137, 24))
-        # self.button_ResumeAll.setObjectName("button_ResumeAll")
-        # self.button_ResumeAll.setIcon(iconResume)
-        # self.horizontalLayout_Button_Speed.addWidget(self.button_ResumeAll)
-        # self.button_InterruptAll = QtWidgets.QPushButton(self.widget_button_speed)
-        # self.button_InterruptAll.setMaximumSize(QtCore.QSize(138, 24))
-        # self.button_InterruptAll.setObjectName("button_InterruptAll")
-        # self.button_InterruptAll.setIcon(iconInterrupt)
-        # self.horizontalLayout_Button_Speed.addWidget(self.button_InterruptAll)
-        # spacerItem_Button_Speed = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout_Button_Speed.addItem(spacerItem_Button_Speed)
-        # self.label_DownloadSpeed = QtWidgets.QLabel(self.widget_button_speed)
-        # self.label_DownloadSpeed.setObjectName("label_DownloadSpeed")
-        # self.horizontalLayout_Button_Speed.addWidget(self.label_DownloadSpeed)
-        # self.horizontalLayout_Button_Speed.setStretch(0, 2)
-        # self.horizontalLayout_Button_Speed.setStretch(1, 2)
-        # self.horizontalLayout_Button_Speed.setStretch(2, 2)
-        # self.horizontalLayout_Button_Speed.setStretch(3, 4)
-        # self.gridLayout.addWidget(self.widget_button_speed, 3, 0, 1, 1)
+        # widget_button_speed
+        self.widget_button_speed = QtWidgets.QWidget(self.centralwidget)
+        self.widget_button_speed.setObjectName("widget_button_speed")
+        self.horizontalLayout_Button_Speed = QtWidgets.QHBoxLayout(self.widget_button_speed)
+        self.horizontalLayout_Button_Speed.setContentsMargins(10, 10, 10, 10)
+        self.horizontalLayout_Button_Speed.setObjectName("horizontalLayout_Button_Speed")
+        self.button_PauseAll = QtWidgets.QPushButton(self.widget_button_speed)
+        self.button_PauseAll.setMaximumSize(QtCore.QSize(138, 24))
+        self.button_PauseAll.setObjectName("button_PauseAll")
+        self.button_PauseAll.setIcon(iconPause)
+        self.horizontalLayout_Button_Speed.addWidget(self.button_PauseAll)
+        self.button_ResumeAll = QtWidgets.QPushButton(self.widget_button_speed)
+        self.button_ResumeAll.setMaximumSize(QtCore.QSize(137, 24))
+        self.button_ResumeAll.setObjectName("button_ResumeAll")
+        self.button_ResumeAll.setIcon(iconResume)
+        self.horizontalLayout_Button_Speed.addWidget(self.button_ResumeAll)
+        self.button_InterruptAll = QtWidgets.QPushButton(self.widget_button_speed)
+        self.button_InterruptAll.setMaximumSize(QtCore.QSize(138, 24))
+        self.button_InterruptAll.setObjectName("button_InterruptAll")
+        self.button_InterruptAll.setIcon(iconInterrupt)
+        self.horizontalLayout_Button_Speed.addWidget(self.button_InterruptAll)
+        spacerItem_Button_Speed = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_Button_Speed.addItem(spacerItem_Button_Speed)
+        self.label_DownloadSpeed = QtWidgets.QLabel(self.widget_button_speed)
+        self.label_DownloadSpeed.setObjectName("label_DownloadSpeed")
+        self.horizontalLayout_Button_Speed.addWidget(self.label_DownloadSpeed)
+        self.horizontalLayout_Button_Speed.setStretch(0, 2)
+        self.horizontalLayout_Button_Speed.setStretch(1, 2)
+        self.horizontalLayout_Button_Speed.setStretch(2, 2)
+        self.horizontalLayout_Button_Speed.setStretch(3, 4)
+        self.gridLayout.addWidget(self.widget_button_speed, 3, 0, 1, 1)
 
         # widget_download
         self.widget_download = QtWidgets.QWidget(self.centralwidget)
@@ -139,8 +152,8 @@ class Ui_mainWindow(object):
         self.horizontalLayout_Browse.setStretch(4, 2)
         self.gridLayout.addWidget(self.widget_browse, 1, 0, 1, 1)
         mainWindow.setCentralWidget(self.centralwidget)
-        # self.button_ResumeAll.setStyleSheet('background-color: #008500; border-color: #008500; color:#fff')
-        # self.button_InterruptAll.setStyleSheet('background-color: #D60000; border-color: #D60000; color:#fff')
+        self.button_ResumeAll.setStyleSheet('background-color: #008500; border-color: #008500; color:#ffffff')
+        self.button_InterruptAll.setStyleSheet('background-color: #D60000; border-color: #D60000; color:#ffffff')
         self.button_Download.setStyleSheet('background-color: #ffc107; border-color: #ffc107')
         self.button_browse.setStyleSheet('background-color: #ffc107; border-color: #ffc107')
 
@@ -195,10 +208,10 @@ class Ui_mainWindow(object):
     def retranslateUi(self, mainWindow):
         _translate = QtCore.QCoreApplication.translate
         mainWindow.setWindowTitle(_translate("mainWindow", "Download Manager"))
-        # self.button_PauseAll.setText(_translate("mainWindow", "Pause All"))
-        # self.button_ResumeAll.setText(_translate("mainWindow", "Resume All"))
-        # self.button_InterruptAll.setText(_translate("mainWindow", "Interrupt All"))
-        # self.label_DownloadSpeed.setText(_translate("mainWindow", "N/A Kb/s"))
+        self.button_PauseAll.setText(_translate("mainWindow", "Pause All"))
+        self.button_ResumeAll.setText(_translate("mainWindow", "Resume All"))
+        self.button_InterruptAll.setText(_translate("mainWindow", "Interrupt All"))
+        self.label_DownloadSpeed.setText(_translate("mainWindow", "N/A Kb/s"))
         self.label_insertDownload.setText(_translate("mainWindow", "Insert URL File to Download"))
         self.button_Download.setText(_translate("mainWindow", "Download"))
         self.label_chooseDirectory.setText(_translate("mainWindow", "Choose directory to save files"))
@@ -226,4 +239,12 @@ class Ui_mainWindow(object):
         self.actionHelp.setText(_translate("mainWindow", "&Help"))
         self.actionHelp.setShortcut(_translate("mainWindow", "Ctrl+H"))
         self.actionHelp.setStatusTip(_translate("mainWindow", "Help"))
+
+
+
+
+
+
+
+
 

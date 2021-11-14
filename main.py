@@ -1,17 +1,16 @@
 import sys
 from PyQt5 import QtWidgets
 from controller import Controller
-from model import Model
+from MainWindow import Ui_mainWindow
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle('Fusion')
     # mainWindow = QtWidgets.QMainWindow()
-    # ui = MainWindow.Ui_mainWindow()
-    # ui.setupUi(mainWindow)
+    # ui = Ui_mainWindow()
+    # ui.setupUi(ui)
     # mainWindow.show()
-    model = Model()
-    controller = Controller(model)
+    controller = Controller()
     controller.show()
     sys.exit(app.exec_())
 

@@ -6,6 +6,7 @@ from message import Message
 import time
 import uuid
 
+
 class Download:
     def __init__(self):
         self.uid = -1
@@ -42,18 +43,20 @@ class Download:
                                    message="The file already exist in the folder.")
             return
 
-        event_thread = threading.Event()
-        event_thread.set()
-        download_thread = threading.Thread(target=lambda: self.downloadItem(link, dir, filename, event_thread, sc))
+        event_thread_pause = threading.Event()
+        event_thread_pause.set()
+        event_thread_interrupt = threading.Event()
+        event_thread_interrupt.clear()
+        download_thread = threading.Thread(target=lambda: self.downloadItem(link, dir, filename, sc, event_thread_pause, event_thread_interrupt))
         download_thread.start()
 
-    def downloadItem(self, link, dir, filename, event_thread, sc):
+    def downloadItem(self, link, dir, filename, sc, event_thread_pause, event_thread_interrupt):
         r = requests.get(link, stream=True)
         # file = open(dir + '/' + filename, "wb")
 
         # r.headers contains info relative to download
         file_dimension_original = int(r.headers['content-length'])
-        download_percentage = 0
+        percentage = 0
         speed = 0
 
         # compute dimension
@@ -62,27 +65,114 @@ class Download:
         uid = uuid.uuid4().fields[-1] # id univoco
         self.uid = uid
 
-        network = Message([filename, download_percentage, speed, file_dimension, uid])
+        network = Message([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
         signal = Signal(network)
         signal.messageChanged.connect(sc.addDownload)
         signal.start()
         signal.disconnect()
 
-        signal.messageChanged.connect(sc.updateDownloadValues)
-        dl = 0
+        dl_total = 0
+        dl_partial = 0
+        signal.messageChanged.connect(sc.updateDownloadItemValues)
         start = time.time()
         for chunk in r.iter_content(chunk_size=256*1024):
             if chunk:
-                # time.sleep(0.05) # a little sleep so you can see the bar progress
-                dl += len(chunk)
-                # file.write(chunk)
-                speed = round(((dl // (time.time() - start)) / 100000) / 8, 5)
-                percentage = round(dl * 100. / int(file_dimension_original), 1)
+                signal.messageChanged.connect(sc.updateDownloadItemValues)
+                if event_thread_interrupt.isSet() is True:
+                    # file.close()
+                    network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
+                    signal.emitSignal()
+                    network = None
+                    signal = None
+                    return
 
-                network.changeData([filename, percentage, speed, file_dimension, uid])
+                if event_thread_pause.isSet() is True:
+                    dl_total += len(chunk)
+                    dl_partial += len(chunk)
+                    # file.write(chunk)
+                    speed = round(((dl_partial // (time.time() - start)) / 100000) / 8, 5)
+
+                else:
+                    start = time.time()
+                    dl_partial = 0
+                    speed = -1
+                    percentage = round(dl_total * 100. / int(file_dimension_original), 1)
+                    network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
+                    signal.emitSignal()
+
+                    ##### deve rimanere in attesa non scaricare in background
+
+
+                    time.sleep(0.1) # a little sleep
+
+                percentage = round(dl_total * 100. / int(file_dimension_original), 1)
+                network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
                 signal.emitSignal()
 
-        network.changeData([filename, 100, 'Completed', file_dimension, uid])
+        network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self])
+        signal.emitSignal()
+        # file.close()
+        print('Download Completed')
+
+
+    def restartDownload(self, link, dir, filename, sc, event_thread_pause, event_thread_interrupt, uid):
+        r = requests.get(link, stream=True)
+        # file = open(dir + '/' + filename, "ab")
+
+        # r.headers contains info relative to download
+        file_dimension_original = int(r.headers['content-length'])
+        percentage = 0
+        speed = 0
+
+        # compute dimension
+        file_dimension = utils.convert_size(file_dimension_original)
+
+        self.uid = uid
+
+        network = Message([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
+        signal = Signal(network)
+        signal.messageChanged.connect(sc.updateDownloadItemValues)
+        signal.start()
+        signal.disconnect()
+
+        dl_total = 0
+        dl_partial = 0
+        start = time.time()
+        for chunk in r.iter_content(chunk_size=256*1024):
+            if chunk:
+                signal.messageChanged.connect(sc.updateDownloadItemValues)
+                if event_thread_interrupt.isSet() is True:
+                    # file.close()
+                    network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
+                    signal.emitSignal()
+                    network = None
+                    signal = None
+                    return
+
+                if event_thread_pause.isSet() is True:
+                    dl_total += len(chunk)
+                    dl_partial += len(chunk)
+                    # file.write(chunk)
+                    speed = round(((dl_partial // (time.time() - start)) / 100000) / 8, 5)
+
+                else:
+                    start = time.time()
+                    dl_partial = 0
+                    speed = -1
+                    percentage = round(dl_total * 100. / int(file_dimension_original), 1)
+                    network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
+                    signal.emitSignal()
+
+                    ##### deve rimanere in attesa non scaricare in background
+
+
+                    time.sleep(0.1) # a little sleep
+
+                percentage = round(dl_total * 100. / int(file_dimension_original), 1)
+                network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
+                signal.emitSignal()
+
+        network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self])
         signal.emitSignal()
         # file.close()
         print('Download Completed')

@@ -79,7 +79,7 @@ class downloadItemView(QWidget):
         _translate = QtCore.QCoreApplication.translate
         self.label_name.setText(_translate("MainWindow", file_name))
         # self.label_download_percentage.setText(_translate("MainWindow", str(download_percentage) + '%'))
-        self.label_speed.setText(_translate("MainWindow", str(speed) + ' Mbps'))
+        self.label_speed.setText(_translate("MainWindow", str(round(float(speed), 1)) + ' KB/s'))
         self.label_dimension.setText(_translate("MainWindow", dimension))
         # self.button_pause.setText(_translate("MainWindow", "Pause"))
         # self.button_resume.setText(_translate("MainWindow", "Resume"))

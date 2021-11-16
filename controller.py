@@ -41,9 +41,9 @@ class Controller(QMainWindow):
 
     def download(self):
         # self.sc.ui.lineEdit_Download.setText('https://images.pexels.com/photos/5775/calculator-scientific.jpg')
-        # self.sc.ui.lineEdit_Download.setText('http://ipv4.download.thinkbroadband.com/5MB.zip')
+        self.sc.ui.lineEdit_Download.setText('http://ipv4.download.thinkbroadband.com/5MB.zip')
         # self.sc.ui.lineEdit_Download.setText('http://ipv4.download.thinkbroadband.com/10MB.zip')
-        self.sc.ui.lineEdit_Download.setText('http://ipv4.download.thinkbroadband.com/20MB.zip')
+        # self.sc.ui.lineEdit_Download.setText('http://ipv4.download.thinkbroadband.com/20MB.zip')
         # self.sc.ui.lineEdit_Download.setText('http://ipv4.download.thinkbroadband.com/50MB.zip')
         # self.sc.ui.lineEdit_Download.setText('http://ipv4.download.thinkbroadband.com/100MB.zip')
         # self.sc.ui.lineEdit_Download.setText('http://ipv4.download.thinkbroadband.com/200MB.zip')

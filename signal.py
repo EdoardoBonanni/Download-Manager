@@ -11,6 +11,10 @@ class Signal(QtCore.QObject):
     def start(self):
         threading.Thread(target=self._execute, daemon=True).start()
 
+    def emitSignal(self):
+        self._execute()
+
+    # execution of thread with private method
     def _execute(self):
         try:
             message = self.network.receiveData()

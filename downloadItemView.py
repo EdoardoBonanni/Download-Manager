@@ -14,19 +14,31 @@ class downloadItemView(QWidget):
         self.horizontalLayout.setContentsMargins(10, 10, 10, 10)
         self.horizontalLayout.setObjectName("horizontalLayout")
 
-        # labels
+        # label_name
         self.label_name = QtWidgets.QLabel(self)
         fontName = QtGui.QFont()
         fontName.setPointSize(10)
         self.label_name.setFont(fontName)
         self.label_name.setObjectName("label_name")
         self.horizontalLayout.addWidget(self.label_name)
-        self.label_download_percentage = QtWidgets.QLabel(self)
-        self.label_download_percentage.setObjectName("label_download_percentage")
-        self.horizontalLayout.addWidget(self.label_download_percentage)
+
+        # label_download_percentage
+        # self.label_download_percentage = QtWidgets.QLabel(self)
+        # self.label_download_percentage.setObjectName("label_download_percentage")
+        # self.horizontalLayout.addWidget(self.label_download_percentage)
+
+        # label_speed
         self.label_speed = QtWidgets.QLabel(self)
         self.label_speed.setObjectName("label_speed")
         self.horizontalLayout.addWidget(self.label_speed)
+
+        # progressbar
+        self.progressBar = QtWidgets.QProgressBar(self)
+        self.progressBar.setProperty("value", download_percentage)
+        self.progressBar.setObjectName("progressBar")
+        self.horizontalLayout.addWidget(self.progressBar)
+
+        # label_dimension
         self.label_dimension = QtWidgets.QLabel(self)
         self.label_dimension.setObjectName("label_dimension")
         self.horizontalLayout.addWidget(self.label_dimension)
@@ -66,7 +78,7 @@ class downloadItemView(QWidget):
         # traslate
         _translate = QtCore.QCoreApplication.translate
         self.label_name.setText(_translate("MainWindow", file_name))
-        self.label_download_percentage.setText(_translate("MainWindow", str(download_percentage) + '%'))
+        # self.label_download_percentage.setText(_translate("MainWindow", str(download_percentage) + '%'))
         self.label_speed.setText(_translate("MainWindow", str(speed) + ' Mbps'))
         self.label_dimension.setText(_translate("MainWindow", dimension))
         # self.button_pause.setText(_translate("MainWindow", "Pause"))

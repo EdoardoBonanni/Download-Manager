@@ -92,7 +92,7 @@ class Download:
                     # file.write(chunk)
                     speed = round(((dl_partial // (time.time() - start)) / 100000) / 8, 5)
 
-                else:
+                while event_thread_pause.isSet() is False:
                     start = time.time()
                     dl_partial = 0
                     speed = -1
@@ -100,10 +100,7 @@ class Download:
                     network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
                     signal.emitSignal()
 
-                    ##### deve rimanere in attesa non scaricare in background
-
-
-                    time.sleep(0.1) # a little sleep
+                    time.sleep(0.2) # a little sleep
 
                 percentage = round(dl_total * 100. / int(file_dimension_original), 1)
                 network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
@@ -155,7 +152,7 @@ class Download:
                     # file.write(chunk)
                     speed = round(((dl_partial // (time.time() - start)) / 100000) / 8, 5)
 
-                else:
+                while event_thread_pause.isSet() is False:
                     start = time.time()
                     dl_partial = 0
                     speed = -1
@@ -163,10 +160,7 @@ class Download:
                     network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
                     signal.emitSignal()
 
-                    ##### deve rimanere in attesa non scaricare in background
-
-
-                    time.sleep(0.1) # a little sleep
+                    time.sleep(0.2) # a little sleep
 
                 percentage = round(dl_total * 100. / int(file_dimension_original), 1)
                 network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])

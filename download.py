@@ -47,10 +47,12 @@ class Download:
         event_thread_pause.set()
         event_thread_interrupt = threading.Event()
         event_thread_interrupt.clear()
-        download_thread = threading.Thread(target=lambda: self.downloadItem(link, dir, filename, sc, event_thread_pause, event_thread_interrupt))
+        event_thread_remove = threading.Event()
+        event_thread_remove.clear()
+        download_thread = threading.Thread(target=lambda: self.downloadItem(link, dir, filename, sc, event_thread_pause, event_thread_interrupt, event_thread_remove))
         download_thread.start()
 
-    def downloadItem(self, link, dir, filename, sc, event_thread_pause, event_thread_interrupt):
+    def downloadItem(self, link, dir, filename, sc, event_thread_pause, event_thread_interrupt, event_thread_remove):
         r = requests.get(link, stream=True)
         # file = open(dir + '/' + filename, "wb")
 
@@ -65,8 +67,8 @@ class Download:
         uid = uuid.uuid4().fields[-1] # id univoco
         self.uid = uid
 
-        network = Message([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
-        signal = Signal(network)
+        message = Message([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
+        signal = Signal(message)
         signal.messageChanged.connect(sc.addDownload)
         signal.start()
         signal.disconnect()
@@ -78,9 +80,18 @@ class Download:
         for chunk in r.iter_content(chunk_size=256*1024):
             if chunk:
                 signal.messageChanged.connect(sc.updateDownloadItemValues)
+
+                if event_thread_remove.isSet() is True:
+                    # file.close()
+                    ## rimuovere file parziale
+                    network = None
+                    signal = None
+                    return
+
+
                 if event_thread_interrupt.isSet() is True:
                     # file.close()
-                    network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
+                    message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
                     signal.emitSignal()
                     network = None
                     signal = None
@@ -97,22 +108,22 @@ class Download:
                     dl_partial = 0
                     speed = -1
                     percentage = round(dl_total * 100. / int(file_dimension_original), 1)
-                    network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
+                    message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
                     signal.emitSignal()
 
                     time.sleep(0.2) # a little sleep
 
                 percentage = round(dl_total * 100. / int(file_dimension_original), 1)
-                network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
+                message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
                 signal.emitSignal()
 
-        network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self])
+        message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self, event_thread_remove])
         signal.emitSignal()
         # file.close()
         print('Download Completed')
 
 
-    def restartDownload(self, link, dir, filename, sc, event_thread_pause, event_thread_interrupt, uid):
+    def restartDownload(self, link, dir, filename, sc, event_thread_pause, event_thread_interrupt, uid, event_thread_remove):
         r = requests.get(link, stream=True)
         # file = open(dir + '/' + filename, "ab")
 
@@ -126,8 +137,8 @@ class Download:
 
         self.uid = uid
 
-        network = Message([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
-        signal = Signal(network)
+        message = Message([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
+        signal = Signal(message)
         signal.messageChanged.connect(sc.updateDownloadItemValues)
         signal.start()
         signal.disconnect()
@@ -140,8 +151,7 @@ class Download:
                 signal.messageChanged.connect(sc.updateDownloadItemValues)
                 if event_thread_interrupt.isSet() is True:
                     # file.close()
-                    network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
-                    signal.emitSignal()
+                    ## rimuovere file parziale
                     network = None
                     signal = None
                     return
@@ -157,16 +167,16 @@ class Download:
                     dl_partial = 0
                     speed = -1
                     percentage = round(dl_total * 100. / int(file_dimension_original), 1)
-                    network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
+                    message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
                     signal.emitSignal()
 
                     time.sleep(0.2) # a little sleep
 
                 percentage = round(dl_total * 100. / int(file_dimension_original), 1)
-                network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self])
+                message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
                 signal.emitSignal()
 
-        network.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self])
+        message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self, event_thread_remove])
         signal.emitSignal()
         # file.close()
         print('Download Completed')

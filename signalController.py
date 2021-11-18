@@ -14,10 +14,10 @@ class signalController(QtWidgets.QMainWindow, Ui_mainWindow):
     @QtCore.pyqtSlot(list)
     def addDownload(self, list):
         # print("Adding a download widget")
-        # list contains link, dir, filename, sc, event_thread_pause, event_thread_interrupt, download_percentage, speed, file_dimension, uid, download object (of the class)
+        # list contains link, dir, filename, sc, event_thread_pause, event_thread_interrupt, download_percentage, speed, file_dimension, uid, download object (of the class), event_thread_remove
         d = downloadItemView(list[2], list[6], list[7], list[8]) # we need file_name, download_percentage, speed, dimension
         dic = downloadItemController(d, list[0], list[1], list[2],
-                                     list[3], list[4], list[5], list[9], list[10]) # we need downloadItemView, all values of list (except download_percentage, speed, file_dimension)
+                                     list[3], list[4], list[5], list[9], list[10], list[11]) # we need downloadItemView, all values of list (except download_percentage, speed, file_dimension)
         self.downloadItems.append((d, list[9])) # append to downloadItems a tuple with downloadItemView and uid
         self.downloadItemsControllers.append(dic)
         self.ui.scrollAreaWidgetLayout.removeItem(self.ui.spacerVertical_downloadList)
@@ -57,6 +57,13 @@ class signalController(QtWidgets.QMainWindow, Ui_mainWindow):
                     d.label_speed.setText('Paused') # Paused
                     d.button_pause.hide()
 
+    @QtCore.pyqtSlot(list)
+    def updateDownloadItemValues(self, list):
+        # list contains downloadItemView, signalController, uid
+        self.downloadItems.remove((list[0], list[2])) # we need downloadItemView, uid
+        self.downloadItemsControllers.remove(list[1]) # we need signalController
+        self.ui.scrollAreaWidgetLayout.removeWidget(list[0]) # we need downloadItemView
+        print('eliminate')
 
 
 

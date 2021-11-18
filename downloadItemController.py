@@ -30,15 +30,15 @@ class downloadItemController(QWidget):
     def pause(self):
         if self.event_thread_interrupt.isSet() is False:
             # print('pause')
-            self.event_thread_pause.clear()
+            self.event_thread_pause.set()
 
     def resume(self):
         if self.event_thread_interrupt.isSet() is False:
             # print('resume after pause')
-            self.event_thread_pause.set()
+            self.event_thread_pause.clear()
         else:
             # print('resume after interrupt')
-            self.event_thread_pause.set()
+            self.event_thread_pause.clear()
             self.event_thread_interrupt.clear()
             download_thread = threading.Thread(target=lambda: self.download_object.restartDownload(self.link, self.dir, self.filename, self.sc, self.event_thread_pause, self.event_thread_interrupt, self.uid, self.event_thread_remove))
             download_thread.start()
@@ -49,15 +49,13 @@ class downloadItemController(QWidget):
             self.event_thread_interrupt.set()
 
     def remove(self):
-        print('remove')
-        self.event_thread_remove.set()
-        self.event_thread_interrupt.set()
-        message = Message([self.downloadItemView, self.sc, self.uid])
-        signal = Signal(message)
-        signal.messageChanged.connect(self.sc.remove)
-        signal.start()
-        signal = None
-        print('a')
+        if self.event_thread_remove.isSet() is False:
+            self.event_thread_remove.set()
+            message = Message([self.downloadItemView, self, self.uid])
+            signal = Signal(message)
+            signal.messageChanged.connect(self.sc.remove)
+            signal.start()
+            signal = None
 
 
 

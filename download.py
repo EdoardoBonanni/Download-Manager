@@ -44,7 +44,7 @@ class Download:
             return
 
         event_thread_pause = threading.Event()
-        event_thread_pause.set()
+        event_thread_pause.clear()
         event_thread_interrupt = threading.Event()
         event_thread_interrupt.clear()
         event_thread_remove = threading.Event()
@@ -54,7 +54,7 @@ class Download:
 
     def downloadItem(self, link, dir, filename, sc, event_thread_pause, event_thread_interrupt, event_thread_remove):
         r = requests.get(link, stream=True)
-        # file = open(dir + '/' + filename, "wb")
+        file = open(dir + '/' + filename, "wb")
 
         # r.headers contains info relative to download
         file_dimension_original = int(r.headers['content-length'])
@@ -82,34 +82,48 @@ class Download:
                 signal.messageChanged.connect(sc.updateDownloadItemValues)
 
                 if event_thread_remove.isSet() is True:
-                    # file.close()
-                    ## rimuovere file parziale
+                    file.close()
+                    os.remove(dir + '/' + filename)
                     network = None
                     signal = None
                     return
 
 
                 if event_thread_interrupt.isSet() is True:
-                    # file.close()
+                    file.close()
                     message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
                     signal.emitSignal()
                     network = None
                     signal = None
                     return
 
-                if event_thread_pause.isSet() is True:
+                if event_thread_pause.isSet() is False:
                     dl_total += len(chunk)
                     dl_partial += len(chunk)
-                    # file.write(chunk)
+                    file.write(chunk)
                     speed = round(((dl_partial // (time.time() - start)) / 100000) / 8, 5)
 
-                while event_thread_pause.isSet() is False:
+                while event_thread_pause.isSet() is True:
                     start = time.time()
                     dl_partial = 0
                     speed = -1
                     percentage = round(dl_total * 100. / int(file_dimension_original), 1)
-                    message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
-                    signal.emitSignal()
+                    if event_thread_remove.isSet() is True:
+                        file.close()
+                        os.remove(dir + '/' + filename)
+                        network = None
+                        signal = None
+                        return
+                    if event_thread_interrupt.isSet() is False and event_thread_remove.isSet() is False:
+                        message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
+                        signal.emitSignal()
+                    elif event_thread_interrupt.isSet() is True and event_thread_remove.isSet() is False:
+                        message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
+                        signal.emitSignal()
+                        file.close()
+                        network = None
+                        signal = None
+                        return
 
                     time.sleep(0.2) # a little sleep
 
@@ -119,13 +133,13 @@ class Download:
 
         message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self, event_thread_remove])
         signal.emitSignal()
-        # file.close()
+        file.close()
         print('Download Completed')
 
 
     def restartDownload(self, link, dir, filename, sc, event_thread_pause, event_thread_interrupt, uid, event_thread_remove):
         r = requests.get(link, stream=True)
-        # file = open(dir + '/' + filename, "ab")
+        file = open(dir + '/' + filename, "ab")
 
         # r.headers contains info relative to download
         file_dimension_original = int(r.headers['content-length'])
@@ -149,27 +163,49 @@ class Download:
         for chunk in r.iter_content(chunk_size=256*1024):
             if chunk:
                 signal.messageChanged.connect(sc.updateDownloadItemValues)
-                if event_thread_interrupt.isSet() is True:
-                    # file.close()
-                    ## rimuovere file parziale
+
+                if event_thread_remove.isSet() is True:
+                    file.close()
+                    os.remove(dir + '/' + filename)
                     network = None
                     signal = None
                     return
 
-                if event_thread_pause.isSet() is True:
+                if event_thread_interrupt.isSet() is True:
+                    file.close()
+                    message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
+                    signal.emitSignal()
+                    network = None
+                    signal = None
+                    return
+
+                if event_thread_pause.isSet() is False:
                     dl_total += len(chunk)
                     dl_partial += len(chunk)
-                    # file.write(chunk)
+                    file.write(chunk)
                     speed = round(((dl_partial // (time.time() - start)) / 100000) / 8, 5)
 
-                while event_thread_pause.isSet() is False:
+                while event_thread_pause.isSet() is True:
                     start = time.time()
                     dl_partial = 0
                     speed = -1
                     percentage = round(dl_total * 100. / int(file_dimension_original), 1)
-                    message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
-                    signal.emitSignal()
-
+                    if event_thread_remove.isSet() is True:
+                        file.close()
+                        os.remove(dir + '/' + filename)
+                        network = None
+                        signal = None
+                        return
+                    if event_thread_interrupt.isSet() is False and event_thread_remove.isSet() is False:
+                        message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
+                        signal.emitSignal()
+                    elif event_thread_interrupt.isSet() is True and event_thread_remove.isSet() is False:
+                        message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove])
+                        signal.emitSignal()
+                        file.close()
+                        network = None
+                        signal = None
+                        return
                     time.sleep(0.2) # a little sleep
 
                 percentage = round(dl_total * 100. / int(file_dimension_original), 1)
@@ -178,7 +214,7 @@ class Download:
 
         message.changeData([link, dir, filename, sc, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self, event_thread_remove])
         signal.emitSignal()
-        # file.close()
+        file.close()
         print('Download Completed')
 
 

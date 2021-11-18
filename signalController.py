@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from downloadItemView import downloadItemView
 from MainWindow import Ui_mainWindow
 from downloadItemController import downloadItemController
+import sip
 
 
 class signalController(QtWidgets.QMainWindow, Ui_mainWindow):
@@ -58,12 +59,10 @@ class signalController(QtWidgets.QMainWindow, Ui_mainWindow):
                     d.button_pause.hide()
 
     @QtCore.pyqtSlot(list)
-    def updateDownloadItemValues(self, list):
-        # list contains downloadItemView, signalController, uid
+    def remove(self, list):
+        # list contains downloadItemView, downloadItemController, uid
         self.downloadItems.remove((list[0], list[2])) # we need downloadItemView, uid
-        self.downloadItemsControllers.remove(list[1]) # we need signalController
+        self.downloadItemsControllers.remove(list[1]) # we need downloadItemController
         self.ui.scrollAreaWidgetLayout.removeWidget(list[0]) # we need downloadItemView
-        print('eliminate')
-
-
-
+        sip.delete(list[0]) # invoke the destructor. it's necessary to avoid problem with child
+        list[0] = None

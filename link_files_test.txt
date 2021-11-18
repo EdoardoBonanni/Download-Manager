@@ -1,0 +1,13 @@
+# images
+https://images.pexels.com/photos/5775/calculator-scientific.jpg
+https://images.freeimages.com/images/small-previews/319/rusted-chain-links-1543555.jpg
+https://images.freeimages.com/images/small-previews/825/linked-hands-1308777.jpg
+https://images.freeimages.com/images/small-previews/0c9/telephone-1-1424162.jpg
+
+# zip test files
+http://ipv4.download.thinkbroadband.com/5MB.zip
+http://ipv4.download.thinkbroadband.com/10MB.zip
+http://ipv4.download.thinkbroadband.com/20MB.zip
+http://ipv4.download.thinkbroadband.com/50MB.zip
+http://ipv4.download.thinkbroadband.com/100MB.zip
+http://ipv4.download.thinkbroadband.com/200MB.zip

@@ -4,9 +4,9 @@ import threading
 class Signal(QtCore.QObject):
     messageChanged = QtCore.pyqtSignal(list)
 
-    def __init__(self, network, parent=None):
+    def __init__(self, message, parent=None):
         super().__init__(parent)
-        self.network = network
+        self.message = message
 
     def start(self):
         threading.Thread(target=self._execute, daemon=True).start()
@@ -17,7 +17,7 @@ class Signal(QtCore.QObject):
     # execution of thread with private method
     def _execute(self):
         try:
-            message = self.network.receiveData()
+            message = self.message.receiveData()
             if message:
                 self.messageChanged.emit(message)
         except:

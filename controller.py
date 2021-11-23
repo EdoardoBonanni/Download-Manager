@@ -3,7 +3,7 @@ from MainWindow import Ui_mainWindow
 from signalController import signalController
 from downloadItemView import downloadItemView
 from download import Download
-import os
+import os, sys
 import utils
 
 class Controller(QMainWindow):
@@ -26,6 +26,12 @@ class Controller(QMainWindow):
         # download event
         self.sc.ui.button_Download.clicked.connect(self.download)
         self.sc.ui.actionDownload.triggered.connect(self.download)
+
+        # close mainwindow event
+        self.sc.ui.actionClose.triggered.connect(self.close)
+
+    def close(self):
+        sys.exit(0)
 
     def searchInitialDir(self):
         currdir = os.getcwd()

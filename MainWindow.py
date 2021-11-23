@@ -24,8 +24,6 @@ class Ui_mainWindow(object):
         iconExit.addPixmap(QtGui.QPixmap("icon/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         iconBrowse = QtGui.QIcon()
         iconBrowse.addPixmap(QtGui.QPixmap("icon/browse.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        iconHelp = QtGui.QIcon()
-        iconHelp.addPixmap(QtGui.QPixmap("icon/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 
         # centralwidget and gridlayout
         self.centralwidget = QtWidgets.QWidget(mainWindow)
@@ -123,8 +121,6 @@ class Ui_mainWindow(object):
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
-        self.menuAbout = QtWidgets.QMenu(self.menubar)
-        self.menuAbout.setObjectName("menuAbout")
         mainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(mainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -138,17 +134,11 @@ class Ui_mainWindow(object):
         self.actionBrowse = QtWidgets.QAction(mainWindow)
         self.actionBrowse.setIcon(iconBrowse)
         self.actionBrowse.setObjectName("actionBrowse")
-        self.actionHelp = QtWidgets.QAction(mainWindow)
-        self.actionHelp.setIcon(iconHelp)
-        self.actionHelp.setObjectName("actionHelp")
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionDownload)
         self.menuFile.addAction(self.actionBrowse)
         self.menuFile.addAction(self.actionClose)
         self.menubar.addAction(self.menuFile.menuAction())
-        self.menuAbout.addSeparator()
-        self.menuAbout.addAction(self.actionHelp)
-        self.menubar.addAction(self.menuAbout.menuAction())
 
         self.retranslateUi(mainWindow)
         QtCore.QMetaObject.connectSlotsByName(mainWindow)
@@ -161,7 +151,6 @@ class Ui_mainWindow(object):
         self.label_chooseDirectory.setText(_translate("mainWindow", "Choose directory to save files"))
         self.button_browse.setText(_translate("mainWindow", "Browse"))
         self.menuFile.setTitle(_translate("mainWindow", "&File"))
-        self.menuAbout.setTitle(_translate("mainWindow", "&About"))
         self.actionDownload.setText(_translate("mainWindow", "&Download"))
         self.actionDownload.setShortcut(_translate("mainWindow", "Ctrl+D"))
         self.actionDownload.setStatusTip(_translate("mainWindow", "Download a file"))
@@ -171,9 +160,6 @@ class Ui_mainWindow(object):
         self.actionBrowse.setText(_translate("mainWindow", "&Browse"))
         self.actionBrowse.setShortcut(_translate("mainWindow", "Ctrl+B"))
         self.actionBrowse.setStatusTip(_translate("mainWindow", "Browse a file"))
-        self.actionHelp.setText(_translate("mainWindow", "&Help"))
-        self.actionHelp.setShortcut(_translate("mainWindow", "Ctrl+H"))
-        self.actionHelp.setStatusTip(_translate("mainWindow", "Help"))
 
 
 

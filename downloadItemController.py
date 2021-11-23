@@ -4,6 +4,7 @@ import threading
 from download import Download
 from message import Message
 from signal import Signal
+import os
 
 class downloadItemController(QWidget):
     def __init__(self, downloadItemView, link, dir, filename, sc, event_thread_pause, event_thread_interrupt, uid, download_object, event_thread_remove):
@@ -55,6 +56,8 @@ class downloadItemController(QWidget):
             signal = Signal(message)
             signal.messageChanged.connect(self.sc.remove)
             signal.start()
+            if self.event_thread_interrupt.isSet() is True:
+                os.remove(self.dir + '/' + self.filename)
             signal = None
 
 

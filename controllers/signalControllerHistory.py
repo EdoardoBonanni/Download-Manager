@@ -16,8 +16,9 @@ class signalControllerHistory(QDialog):
 
     @QtCore.pyqtSlot(list)
     def addTableItem(self, list):
-        # ti contains uid, tableitem_id, filename, status, dimension, start_time, end_time
+        # in this case list contains only ti
         ti = list[0]
+        # ti contains uid, tableitem_id, filename, status, dimension, start_time, end_time
         values = ti.getValues()
         idTableItems = [item[1] for item in self.items] # extract tableitem_id from tuple of items
 
@@ -44,8 +45,9 @@ class signalControllerHistory(QDialog):
 
     @QtCore.pyqtSlot(list)
     def updateTableItem(self, list):
-        # ti contains uid, tableitem_id, filename, status, dimension, start_time, end_time
+        # in this case list contains only ti
         ti = list[0]
+        # ti contains uid, tableitem_id, filename, status, dimension, start_time, end_time
         values = ti.getValues()
         idTableItems = [item[1] for item in self.items] # extract tableitem_id from tuple of items
 

@@ -9,31 +9,30 @@ class signalControllerMainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
     def __init__(self, mainWindow, parent=None):
         super().__init__(parent)
         self.ui = mainWindow
-        self.downloadItems = []
-        self.downloadItemsControllers = []
+        self.downloadItems = [] # a list of download started, paused, interrupted or completed
+        self.downloadItemsControllers = [] # a list of controllers of previous downloads
 
     @QtCore.pyqtSlot(list)
     def addDownload(self, list):
-        # print("Adding a download widget")
-        # list contains link, dir, filename, sc, event_thread_pause, event_thread_interrupt, download_percentage, speed, file_dimension, uid, download object (of the class), event_thread_remove, controller_history
+        # list contains link, dir, filename, scMW (itself), event_thread_pause, event_thread_interrupt, download_percentage, speed, file_dimension, uid, fileDownload (object), event_thread_remove, sch (signalControllerHistory), tableItem (object)
+
         d = downloadItemView(list[2], list[6], list[7], list[8]) # we need file_name, download_percentage, speed, dimension
         dic = downloadItemController(d, list[0], list[1], list[2],
-                                     list[3], list[4], list[5], list[9], list[10], list[11], list[12], list[13]) # we need downloadItemView, all values of list (except download_percentage, speed, file_dimension)
+                                     list[3], list[4], list[5], list[9], list[10], list[11], list[12], list[13])
+        # we need downloadItemView, dir, filename, scMW (itself), event_thread_pause, event_thread_interrupt,  uid, fileDownload (object), event_thread_remove, sch (signalControllerHistory), tableItem (object)
+
         self.downloadItems.append((d, list[9])) # append to downloadItems a tuple with downloadItemView and uid
-        self.downloadItemsControllers.append(dic)
+        self.downloadItemsControllers.append(dic) # add a controller of this download to downloadItemsControllers list
         self.ui.scrollAreaWidgetLayout.removeItem(self.ui.spacerVertical_downloadList)
-        self.ui.scrollAreaWidgetLayout.addWidget(d)
+        self.ui.scrollAreaWidgetLayout.addWidget(d) # add downloadItemView to scrollAreaWidgetLayout
         self.ui.scrollAreaWidgetLayout.addItem(self.ui.spacerVertical_downloadList)
 
     @QtCore.pyqtSlot(list)
     def updateDownloadItemValues(self, list):
-        # print("Update downloadItem values")
-        # print(list)
         tupla = [item[0] for item in self.downloadItems if item[1] == list[9]] # search downloadItem with a specific uid in list of tuples
         d = tupla[0] # get downloadItemView
-        # d.label_download_percentage.setText(str(list[1]) + '%')
         d.progressBar.setProperty("value", int(list[6])) # set value of progressbar with download_percentage
-        if isinstance(list[7], str): #check type of speed variable
+        if isinstance(list[7], str): # check type of speed variable
             d.label_speed.setText(list[7]) # download completed insert in speed label
             d.button_pause.hide()
             d.button_resume.hide()
@@ -61,8 +60,8 @@ class signalControllerMainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
     @QtCore.pyqtSlot(list)
     def remove(self, list):
         # list contains downloadItemView, downloadItemController, uid
-        self.downloadItems.remove((list[0], list[2])) # we need downloadItemView, uid
-        self.downloadItemsControllers.remove(list[1]) # we need downloadItemController
-        self.ui.scrollAreaWidgetLayout.removeWidget(list[0]) # we need downloadItemView
-        sip.delete(list[0]) # invoke the destructor. it's necessary to avoid problem with child
+        self.downloadItems.remove((list[0], list[2])) # we remove downloadItemView from downloadItems list
+        self.downloadItemsControllers.remove(list[1]) # we remove the respective controller from downloadItemsControllers list
+        self.ui.scrollAreaWidgetLayout.removeWidget(list[0]) # we remove the downloadItemView from the scrollAreaWidgetLayout
+        sip.delete(list[0]) # we invoke the destructor. it's necessary to avoid problem with child of downloadItemView
         list[0] = None

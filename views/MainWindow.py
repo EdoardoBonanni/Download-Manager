@@ -41,7 +41,6 @@ class Ui_mainWindow(object):
         self.layout_containing_scrollArea.setObjectName("layout_containing_scrollArea")
         ## scrollArea
         self.scrollArea = QtWidgets.QScrollArea()
-        # self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.scrollArea.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.scrollArea.setWidgetResizable(True)
@@ -57,7 +56,7 @@ class Ui_mainWindow(object):
         self.scrollAreaWidgetLayout.setObjectName("scrollAreaWidgetLayout")
         ### verticalSpacer
         self.spacerVertical_downloadList = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        #self.scrollAreaWidgetLayout.addItem(self.spacerVertical_downloadList)
+        self.scrollAreaWidgetLayout.addItem(self.spacerVertical_downloadList)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.layout_containing_scrollArea.addWidget(self.scrollArea)
         self.gridLayout.addWidget(self.widget_containing_scrollArea, 2, 0, 1, 1)

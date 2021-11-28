@@ -1,0 +1,1 @@
+# Folder where are saved the history files

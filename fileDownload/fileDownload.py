@@ -326,6 +326,7 @@ class fileDownload:
         signal = None
 
 
+    # For future implementation
     def resumeDownload(self, link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, uid, event_thread_remove, sch, bytes_read, total_bytes):
         resume_header = {'Range': 'bytes=%d-' % bytes_read}
         r = requests.get(link, headers=resume_header, stream=True,  verify=False, allow_redirects=True)

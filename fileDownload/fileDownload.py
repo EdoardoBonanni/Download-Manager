@@ -14,6 +14,7 @@ class fileDownload:
     def __init__(self):
         self.uid = -1
 
+
     def check_download_info(self, link, dir, scMW, sch):
         root = tk.Tk()
         root.overrideredirect(1)
@@ -61,17 +62,20 @@ class fileDownload:
         download_thread.setDaemon(True)
         download_thread.start()
 
+
     def downloadItem(self, link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, event_thread_remove, sch):
-        r = requests.get(link, stream=True)
+        resume_header = {'Range': 'bytes=%d-' % 0}
+        r = requests.get(link, headers=resume_header, stream=True,  verify=False, allow_redirects=True)
+        # r = requests.get(link, stream=True)
         file = open(dir + '/' + filename, "wb")
 
         # r.headers contains info relative to download
-        file_dimension_original = int(r.headers['content-length'])
+        total_bytes = int(r.headers['content-length'])
         percentage = 0
         speed = 0
 
         # compute dimension
-        file_dimension = utils_function.convert_size(file_dimension_original)
+        file_dimension = utils_function.convert_size(total_bytes)
 
         uid = uuid.uuid4().fields[-1] # id univoco thread
         self.uid = uid
@@ -88,7 +92,7 @@ class fileDownload:
         signalHistory.disconnect()
 
         # signal to mainwindow
-        message = Message([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti])
+        message = Message([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, 0, total_bytes])
         signal = Signal(message)
         signal.messageChanged.connect(scMW.addDownload)
         signal.start()
@@ -121,7 +125,7 @@ class fileDownload:
                     signalHistory.messageChanged.connect(sch.updateTableItem)
                     messageHistory.changeData([ti])
                     signalHistory.emitSignal()
-                    message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti])
+                    message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
                     signal.emitSignal()
                     messageHistory = None
                     signalHistory = None
@@ -141,7 +145,7 @@ class fileDownload:
                     start = time.time()
                     dl_partial = 0
                     speed = -1
-                    percentage = round(dl_total * 100. / int(file_dimension_original), 1)
+                    percentage = round(dl_total * 100. / int(total_bytes), 1)
                     if event_thread_remove.isSet() is True:
                         file.close()
                         os.remove(dir + '/' + filename)
@@ -151,7 +155,7 @@ class fileDownload:
                         signal = None
                         return
                     if event_thread_interrupt.isSet() is False and event_thread_remove.isSet() is False:
-                        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti])
+                        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
                         signal.emitSignal()
                     elif event_thread_interrupt.isSet() is True and event_thread_remove.isSet() is False:
                         now = datetime.now()
@@ -160,7 +164,7 @@ class fileDownload:
                         signalHistory.messageChanged.connect(sch.updateTableItem)
                         messageHistory.changeData([ti])
                         signalHistory.emitSignal()
-                        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti])
+                        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
                         signal.emitSignal()
                         file.close()
                         messageHistory = None
@@ -171,8 +175,8 @@ class fileDownload:
 
                     time.sleep(0.2) # a little sleep
 
-                percentage = round(dl_total * 100. / int(file_dimension_original), 1)
-                message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti])
+                percentage = round(dl_total * 100. / int(total_bytes), 1)
+                message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
                 signal.emitSignal()
 
         # download complete and we update the views
@@ -182,7 +186,7 @@ class fileDownload:
         signalHistory.messageChanged.connect(sch.updateTableItem)
         messageHistory.changeData([ti])
         signalHistory.emitSignal()
-        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self, event_thread_remove, sch, ti])
+        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
         signal.emitSignal()
         file.close()
         messageHistory = None
@@ -192,16 +196,18 @@ class fileDownload:
 
 
     def restartDownload(self, link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, uid, event_thread_remove, sch):
-        r = requests.get(link, stream=True)
+        resume_header = {'Range': 'bytes=%d-' % 0}
+        r = requests.get(link, headers=resume_header, stream=True,  verify=False, allow_redirects=True)
+        # r = requests.get(link, stream=True)
         file = open(dir + '/' + filename, "ab")
 
         # r.headers contains info relative to download
-        file_dimension_original = int(r.headers['content-length'])
+        total_bytes = int(r.headers['content-length'])
         percentage = 0
         speed = 0
 
         # compute dimension
-        file_dimension = utils_function.convert_size(file_dimension_original)
+        file_dimension = utils_function.convert_size(total_bytes)
 
         self.uid = uid
 
@@ -217,7 +223,7 @@ class fileDownload:
         signalHistory.disconnect()
 
         # signal to mainwindow
-        message = Message([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti])
+        message = Message([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, 0, total_bytes])
         signal = Signal(message)
         signal.messageChanged.connect(scMW.updateDownloadItemValues)
         signal.start()
@@ -251,7 +257,7 @@ class fileDownload:
                     signalHistory.messageChanged.connect(sch.updateTableItem)
                     messageHistory.changeData([ti])
                     signalHistory.emitSignal()
-                    message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti])
+                    message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
                     signal.emitSignal()
                     messageHistory = None
                     signalHistory = None
@@ -271,7 +277,7 @@ class fileDownload:
                     start = time.time()
                     dl_partial = 0
                     speed = -1
-                    percentage = round(dl_total * 100. / int(file_dimension_original), 1)
+                    percentage = round(dl_total * 100. / int(total_bytes), 1)
                     if event_thread_remove.isSet() is True:
                         file.close()
                         os.remove(dir + '/' + filename)
@@ -281,7 +287,7 @@ class fileDownload:
                         signal = None
                         return
                     if event_thread_interrupt.isSet() is False and event_thread_remove.isSet() is False:
-                        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti])
+                        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
                         signal.emitSignal()
                     elif event_thread_interrupt.isSet() is True and event_thread_remove.isSet() is False:
                         now = datetime.now()
@@ -290,7 +296,7 @@ class fileDownload:
                         signalHistory.messageChanged.connect(sch.updateTableItem)
                         messageHistory.changeData([ti])
                         signalHistory.emitSignal()
-                        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti])
+                        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
                         signal.emitSignal()
                         file.close()
                         messageHistory = None
@@ -300,8 +306,8 @@ class fileDownload:
                         return
                     time.sleep(0.2) # a little sleep
 
-                percentage = round(dl_total * 100. / int(file_dimension_original), 1)
-                message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti])
+                percentage = round(dl_total * 100. / int(total_bytes), 1)
+                message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
                 signal.emitSignal()
 
         # download complete and we update the views
@@ -311,7 +317,7 @@ class fileDownload:
         signalHistory.messageChanged.connect(sch.updateTableItem)
         messageHistory.changeData([ti])
         signalHistory.emitSignal()
-        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self, event_thread_remove, sch, ti])
+        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
         signal.emitSignal()
         file.close()
         messageHistory = None
@@ -319,3 +325,134 @@ class fileDownload:
         network = None
         signal = None
 
+
+    def resumeDownload(self, link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, uid, event_thread_remove, sch, bytes_read, total_bytes):
+        resume_header = {'Range': 'bytes=%d-' % bytes_read}
+        r = requests.get(link, headers=resume_header, stream=True,  verify=False, allow_redirects=True)
+        # r = requests.get(link, stream=True)
+        file = open(dir + '/' + filename, "ab")
+
+        # r.headers contains info relative to download
+        file_dimension_remain_original = int(r.headers['content-length'])
+        percentage = round(bytes_read * 100. / int(total_bytes), 1)
+        speed = 0
+
+        # compute dimension
+        file_dimension_remain = utils_function.convert_size(file_dimension_remain_original)
+        file_dimension = utils_function.convert_size(total_bytes)
+
+        self.uid = uid
+
+        # signal to history table
+        now = datetime.now()
+        dt_string_start = now.strftime("%d/%m/%Y %H:%M:%S") # dd/mm/YY H:M:S
+        tableitem_id = uuid.uuid4().fields[-1] # id univoco tableItem
+        ti = tableItem(self.uid, tableitem_id, filename, 'Restarted', file_dimension, dt_string_start, "N/A")
+        messageHistory = Message([ti])
+        signalHistory = Signal(messageHistory)
+        signalHistory.messageChanged.connect(sch.addTableItem)
+        signalHistory.start()
+        signalHistory.disconnect()
+
+        # signal to mainwindow
+        message = Message([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, bytes_read, total_bytes])
+        signal = Signal(message)
+        signal.messageChanged.connect(scMW.updateDownloadItemValues)
+        signal.start()
+        signal.disconnect()
+
+        dl_total = bytes_read
+        dl_partial = 0
+        start = time.time()
+
+        # download started
+        for chunk in r.iter_content(chunk_size=256*1024):
+            if chunk:
+                signal.messageChanged.connect(scMW.updateDownloadItemValues)
+
+                if event_thread_remove.isSet() is True:
+                    # if download removed we close the file and remove the file from folder
+                    file.close()
+                    os.remove(dir + '/' + filename)
+                    messageHistory = None
+                    signalHistory = None
+                    network = None
+                    signal = None
+                    return
+
+                if event_thread_interrupt.isSet() is True:
+                    # if downloaded interrupted we update the views
+                    file.close()
+                    now = datetime.now()
+                    dt_string_end = now.strftime("%d/%m/%Y %H:%M:%S") # dd/mm/YY H:M:S
+                    ti.updateValues(filename, 'Interrupted', file_dimension, dt_string_start, dt_string_end)
+                    signalHistory.messageChanged.connect(sch.updateTableItem)
+                    messageHistory.changeData([ti])
+                    signalHistory.emitSignal()
+                    message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
+                    signal.emitSignal()
+                    messageHistory = None
+                    signalHistory = None
+                    network = None
+                    signal = None
+                    return
+
+                if event_thread_pause.isSet() is False:
+                    # download continue normally
+                    dl_total += len(chunk)
+                    dl_partial += len(chunk)
+                    file.write(chunk)
+                    speed = round(((dl_partial // (time.time() - start)) / 100000) / 8, 5)
+
+                while event_thread_pause.isSet() is True:
+                    # download remain in pause
+                    start = time.time()
+                    dl_partial = 0
+                    speed = -1
+                    percentage = round(dl_total * 100. / int(total_bytes), 1)
+                    if event_thread_remove.isSet() is True:
+                        file.close()
+                        os.remove(dir + '/' + filename)
+                        messageHistory = None
+                        signalHistory = None
+                        network = None
+                        signal = None
+                        return
+                    if event_thread_interrupt.isSet() is False and event_thread_remove.isSet() is False:
+                        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
+                        signal.emitSignal()
+                    elif event_thread_interrupt.isSet() is True and event_thread_remove.isSet() is False:
+                        now = datetime.now()
+                        dt_string_end = now.strftime("%d/%m/%Y %H:%M:%S") # dd/mm/YY H:M:S
+                        ti.updateValues(filename, 'Interrupted', file_dimension, dt_string_start, dt_string_end)
+                        signalHistory.messageChanged.connect(sch.updateTableItem)
+                        messageHistory.changeData([ti])
+                        signalHistory.emitSignal()
+                        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
+                        signal.emitSignal()
+                        file.close()
+                        messageHistory = None
+                        signalHistory = None
+                        network = None
+                        signal = None
+                        return
+                    time.sleep(0.2) # a little sleep
+
+                percentage = round(dl_total * 100. / int(total_bytes), 1)
+                message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
+                signal.emitSignal()
+
+        # download complete and we update the views
+        now = datetime.now()
+        dt_string_end = now.strftime("%d/%m/%Y %H:%M:%S") # dd/mm/YY H:M:S
+        ti.updateValues(filename, 'Completed', file_dimension, dt_string_start, dt_string_end)
+        signalHistory.messageChanged.connect(sch.updateTableItem)
+        messageHistory.changeData([ti])
+        signalHistory.emitSignal()
+        message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, 100, 'Completed', file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
+        signal.emitSignal()
+        file.close()
+        messageHistory = None
+        signalHistory = None
+        network = None
+        signal = None

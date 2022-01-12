@@ -11,6 +11,7 @@ def convert_size(size_bytes):
     s = round(size_bytes / p, 2)
     return "%s %s" % (s, size_name[i])
 
+
 def chooseDirectory(initialdir):
     root = tk.Tk()
     root.withdraw() # use to hide tkinter window

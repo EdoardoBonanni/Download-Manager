@@ -8,11 +8,14 @@ class Signal(QtCore.QObject):
         super().__init__(parent)
         self.message = message
 
+
     def start(self):
         threading.Thread(target=self._execute, daemon=True).start()
 
+
     def emitSignal(self):
         self._execute()
+
 
     # execution of thread with private method
     def _execute(self):

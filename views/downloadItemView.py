@@ -75,10 +75,6 @@ class downloadItemView(QWidget):
         self.label_name.setText(_translate("MainWindow", file_name))
         self.label_speed.setText(_translate("MainWindow", str(round(float(speed), 1)) + ' KB/s'))
         self.label_dimension.setText(_translate("MainWindow", dimension))
-        # self.button_pause.setText(_translate("MainWindow", "Pause"))
-        # self.button_resume.setText(_translate("MainWindow", "Resume"))
-        # self.button_interrupt.setText(_translate("MainWindow", "Interrupt"))
-        # self.button_remove.setText(_translate("MainWindow", "Remove"))
 
         self.setLayout(self.horizontalLayout)
 

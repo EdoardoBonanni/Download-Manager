@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 
 class downloadItemController(QWidget):
-    def __init__(self, downloadItemView, link, dir, filename, signalControllerMW, event_thread_pause, event_thread_interrupt, uid, download_object, event_thread_remove, signalControllerHistory, tableItem):
+    def __init__(self, downloadItemView, link, dir, filename, signalControllerMW, event_thread_pause, event_thread_interrupt, uid, fileDownload_object, event_thread_remove, signalControllerHistory, tableItem, bytes_read, total_bytes):
         super(QWidget, self).__init__()
         self.downloadItemView = downloadItemView
         self.link = link
@@ -16,12 +16,15 @@ class downloadItemController(QWidget):
         self.event_thread_pause = event_thread_pause
         self.event_thread_interrupt = event_thread_interrupt
         self.uid = uid
-        self.download_object = download_object
+        self.fileDownload_object = fileDownload_object
         self.event_thread_remove = event_thread_remove
         self.sch = signalControllerHistory
         self.ti = tableItem
+        self.bytes_read = bytes_read
+        self.total_bytes = total_bytes
 
         self.actions()
+
 
     def actions(self):
         self.downloadItemView.button_pause.clicked.connect(self.pause)
@@ -29,27 +32,20 @@ class downloadItemController(QWidget):
         self.downloadItemView.button_interrupt.clicked.connect(self.interrupt)
         self.downloadItemView.button_remove.clicked.connect(self.remove)
 
+
+    def updateBytesRead(self, bytes_read):
+        self.bytes_read = bytes_read
+
+
     def pause(self):
         if self.event_thread_interrupt.isSet() is False:
-            # print('pause')
             self.event_thread_pause.set()
 
-    def resume(self):
-        if self.event_thread_interrupt.isSet() is False:
-            # print('resume after pause')
-            self.event_thread_pause.clear()
-        else:
-            # print('resume after interrupt')
-            self.event_thread_pause.clear()
-            self.event_thread_interrupt.clear()
-            download_thread = threading.Thread(target=lambda: self.download_object.restartDownload(self.link, self.dir, self.filename, self.scMW, self.event_thread_pause, self.event_thread_interrupt, self.uid, self.event_thread_remove, self.sch))
-            download_thread.setDaemon(True)
-            download_thread.start()
 
     def interrupt(self):
         if self.downloadItemView.label_speed.text() != 'Completed':
-            # print('interrupt')
             self.event_thread_interrupt.set()
+
 
     def remove(self):
         if self.event_thread_remove.isSet() is False:

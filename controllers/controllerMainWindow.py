@@ -17,7 +17,7 @@ class controllerMainWindow(QMainWindow):
         ui = Ui_mainWindow()
         ui.setupUi(self)
 
-        self.timer = QtCore.QTimer()
+        self.timerHistory = QtCore.QTimer()
 
         self.scMW = signalControllerMainWindow(ui)
         self.controller_history = signalControllerHistory()
@@ -43,13 +43,15 @@ class controllerMainWindow(QMainWindow):
         self.scMW.ui.actionHistory.triggered.connect(self.showHistory)
 
         # update history file every second
-        self.timer.timeout.connect(self.updateHistoryFile)
-        self.timer.start(1000)
+        self.timerHistory.timeout.connect(self.updateHistoryFile)
+        self.timerHistory.start(1000)
+
 
     def searchInitialDir(self):
         currdir = os.getcwd()
         currdir = currdir.replace('\\','/')
         self.scMW.ui.lineEdit_chooseDirectory.setText(currdir + '/downloads')
+
 
     def chooseDirectory(self):
         dir = self.scMW.ui.lineEdit_chooseDirectory.text()
@@ -58,6 +60,7 @@ class controllerMainWindow(QMainWindow):
         # print('New directory Download:', directorypath)
         self.scMW.ui.lineEdit_chooseDirectory.setText(directorypath)
 
+
     def download(self):
         link = self.scMW.ui.lineEdit_Download.text()
         dir = self.scMW.ui.lineEdit_chooseDirectory.text()
@@ -65,8 +68,10 @@ class controllerMainWindow(QMainWindow):
         time.sleep(0.2)
         download.check_download_info(link, dir, self.scMW, self.controller_history)
 
+
     def showHistory(self):
         self.controller_history.show()
+
 
     def readHistory(self):
         if os.path.isfile('history_files/historyItems.pkl'):
@@ -78,19 +83,23 @@ class controllerMainWindow(QMainWindow):
             messageHistory = None
             signalHistory = None
 
+
     def updateHistoryFile(self):
-        list = [self.controller_history.items, self.controller_history.status_array, self.controller_history.end_times]
-        save_load_object.saveObject(list, 'history_files/historyItems')
+        listHistory = [self.controller_history.items, self.controller_history.status_array, self.controller_history.end_times]
+        save_load_object.saveObject(listHistory, 'history_files/historyItems')
+
+
 
     def close_window(self):
-        list = [self.controller_history.items, self.controller_history.status_array, self.controller_history.end_times]
-        save_load_object.saveObject(list, 'history_files/historyItems')
+        listHistory = [self.controller_history.items, self.controller_history.status_array, self.controller_history.end_times]
+        save_load_object.saveObject(listHistory, 'history_files/historyItems')
         sys.exit()
+
 
     # override of close event
     def closeEvent(self, event):
-        list = [self.controller_history.items, self.controller_history.status_array, self.controller_history.end_times]
-        save_load_object.saveObject(list, 'history_files/historyItems')
+        listHistory = [self.controller_history.items, self.controller_history.status_array, self.controller_history.end_times]
+        save_load_object.saveObject(listHistory, 'history_files/historyItems')
         sys.exit()
 
 

@@ -14,6 +14,7 @@ class signalControllerHistory(QDialog):
         self.status_array = []
         self.end_times = []
 
+
     @QtCore.pyqtSlot(list)
     def addTableItem(self, list):
         # in this case list contains only ti

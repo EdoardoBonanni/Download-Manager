@@ -12,14 +12,15 @@ class signalControllerMainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.downloadItems = [] # a list of download started, paused, interrupted or completed
         self.downloadItemsControllers = [] # a list of controllers of previous downloads
 
+
     @QtCore.pyqtSlot(list)
     def addDownload(self, list):
-        # list contains link, dir, filename, scMW (itself), event_thread_pause, event_thread_interrupt, download_percentage, speed, file_dimension, uid, fileDownload (object), event_thread_remove, sch (signalControllerHistory), tableItem (object)
+        # list contains link, dir, filename, scMW (itself), event_thread_pause, event_thread_interrupt, download_percentage, speed, file_dimension, uid, fileDownload (object), event_thread_remove, sch (signalControllerHistory), tableItem (object), bytes_read, total_bytes
 
         d = downloadItemView(list[2], list[6], list[7], list[8]) # we need file_name, download_percentage, speed, dimension
         dic = downloadItemController(d, list[0], list[1], list[2],
-                                     list[3], list[4], list[5], list[9], list[10], list[11], list[12], list[13])
-        # we need downloadItemView, dir, filename, scMW (itself), event_thread_pause, event_thread_interrupt,  uid, fileDownload (object), event_thread_remove, sch (signalControllerHistory), tableItem (object)
+                                     list[3], list[4], list[5], list[9], list[10], list[11], list[12], list[13], list[14], list[15])
+        # we need downloadItemView, dir, filename, scMW (itself), event_thread_pause, event_thread_interrupt,  uid, fileDownload (object), event_thread_remove, sch (signalControllerHistory), tableItem (object), bytes_read, total_bytes
 
         self.downloadItems.append((d, list[9])) # append to downloadItems a tuple with downloadItemView and uid
         self.downloadItemsControllers.append(dic) # add a controller of this download to downloadItemsControllers list
@@ -27,10 +28,15 @@ class signalControllerMainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.ui.scrollAreaWidgetLayout.addWidget(d) # add downloadItemView to scrollAreaWidgetLayout
         self.ui.scrollAreaWidgetLayout.addItem(self.ui.spacerVertical_downloadList)
 
+
     @QtCore.pyqtSlot(list)
     def updateDownloadItemValues(self, list):
-        tupla = [item[0] for item in self.downloadItems if item[1] == list[9]] # search downloadItem with a specific uid in list of tuples
-        d = tupla[0] # get downloadItemView
+        idx = [idx for idx, item in enumerate(self.downloadItems) if item[1] == list[9]] # search index of downloadItem with a specific uid in list of tuples
+        idx = idx[0]
+        d = self.downloadItems[idx][0] # get downloadItemView
+        dic = self.downloadItemsControllers[idx] # get downloadItemController
+        bytes_read = list[14]
+        dic.updateBytesRead(bytes_read) # update bytes_read
         d.progressBar.setProperty("value", int(list[6])) # set value of progressbar with download_percentage
         if isinstance(list[7], str): # check type of speed variable
             d.label_speed.setText(list[7]) # download completed insert in speed label
@@ -56,6 +62,7 @@ class signalControllerMainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
                 else:
                     d.label_speed.setText('Paused') # Paused
                     d.button_pause.hide()
+
 
     @QtCore.pyqtSlot(list)
     def remove(self, list):

@@ -42,6 +42,19 @@ class downloadItemController(QWidget):
             self.event_thread_pause.set()
 
 
+    def resume(self):
+        if self.event_thread_interrupt.isSet() is False:
+            # print('resume after pause')
+            self.event_thread_pause.clear()
+        else:
+            # print('resume after interrupt')
+            self.event_thread_pause.clear()
+            self.event_thread_interrupt.clear()
+            download_thread = threading.Thread(target=lambda: self.fileDownload_object.restartDownload(self.link, self.dir, self.filename, self.scMW, self.event_thread_pause, self.event_thread_interrupt, self.uid, self.event_thread_remove, self.sch))
+            download_thread.setDaemon(True)
+            download_thread.start()
+
+
     def interrupt(self):
         if self.downloadItemView.label_speed.text() != 'Completed':
             self.event_thread_interrupt.set()

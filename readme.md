@@ -20,10 +20,10 @@ Just launch **main.py** with python (if you have a virtual environment, remember
 $ python3 main.py
 ```
 The MainWindow presents itself like this:
-![MainWindow.png](downloads/use-case MainWindow.png)
+![MainWindow.png](https://github.com/EdoardoBonanni/Download-Manager/blob/main/downloads/use-case%20MainWindow.png)
 
 To open the Qdialog containing the history of all downloads go to "File" -> "History" or use the shortcut Ctrl+H.
-![QDialog.png](downloads/use-case QDialog.png)
+![QDialog.png](https://github.com/EdoardoBonanni/Download-Manager/blob/main/downloads/use-case%20QDialog.png)
 
 
 ## Implementation

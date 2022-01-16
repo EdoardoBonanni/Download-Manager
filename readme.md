@@ -19,6 +19,12 @@ Just launch **main.py** with python (if you have a virtual environment, remember
 ```bash
 $ python3 main.py
 ```
+The MainWindow presents itself like this:
+![MainWindow.png](downloads/use-case MainWindow.png)
+
+To open the Qdialog containing the history of all downloads go to "File" -> "History" or use the shortcut Ctrl+H.
+![QDialog.png](downloads/use-case QDialog.png)
+
 
 ## Implementation
 This application was created to practice on Model-View-Control design pattern and it's a part of Human Computer Interaction exam at Unifi - Florence.

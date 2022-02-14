@@ -21,16 +21,23 @@ class signalControllerHistory(QDialog):
         ti = list[0]
         # ti contains uid, tableitem_id, filename, status, dimension, start_time, end_time
         values = ti.getValues()
+        uid = values[0]
+        tableitem_id = values[1]
+        filename = values[2]
+        status = values[3]
+        dimension = values[4]
+        start_time = values[5]
+        end_time = values[6]
         idTableItems = [item[1] for item in self.items] # extract tableitem_id from tuple of items
 
-        if values[1] not in idTableItems: # check if a particular download exist
+        if tableitem_id not in idTableItems: # check if a particular download exist
             self.ui.tableWidget.insertRow(0) # add a row in position 0
 
-            self.ui.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(str(values[2]))) # filename
-            self.ui.tableWidget.setItem(0, 1, QtWidgets.QTableWidgetItem(str(values[3]))) # status
-            self.ui.tableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(str(values[4]))) # dimension
-            self.ui.tableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem(str(values[5]))) # start_time
-            self.ui.tableWidget.setItem(0, 4, QtWidgets.QTableWidgetItem(str(values[6]))) # end_time
+            self.ui.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(str(filename)))
+            self.ui.tableWidget.setItem(0, 1, QtWidgets.QTableWidgetItem(str(status)))
+            self.ui.tableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(str(dimension)))
+            self.ui.tableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem(str(start_time)))
+            self.ui.tableWidget.setItem(0, 4, QtWidgets.QTableWidgetItem(str(end_time)))
 
             self.ui.tableWidget.resizeColumnToContents(0)
             self.ui.tableWidget.resizeColumnToContents(1)
@@ -38,10 +45,10 @@ class signalControllerHistory(QDialog):
             self.ui.tableWidget.resizeColumnToContents(3)
             self.ui.tableWidget.resizeColumnToContents(4)
 
-            self.items.insert(0, (values[0], values[1], values[2], values[4], values[5])) # insert a tuple of (uid, tableitem_id, filename, dimension, start_time) in top of array = position 0
+            self.items.insert(0, (uid, tableitem_id, filename, dimension, start_time)) # insert a tuple of (uid, tableitem_id, filename, dimension, start_time) in top of array = position 0
             # Because tuple is not subscriptable i need an array for every values of tableItem that can change
-            self.status_array.insert(0, values[3])
-            self.end_times.insert(0, values[6])
+            self.status_array.insert(0, status)
+            self.end_times.insert(0, end_time)
 
 
     @QtCore.pyqtSlot(list)
@@ -50,15 +57,21 @@ class signalControllerHistory(QDialog):
         ti = list[0]
         # ti contains uid, tableitem_id, filename, status, dimension, start_time, end_time
         values = ti.getValues()
+        tableitem_id = values[1]
+        filename = values[2]
+        status = values[3]
+        dimension = values[4]
+        start_time = values[5]
+        end_time = values[6]
         idTableItems = [item[1] for item in self.items] # extract tableitem_id from tuple of items
 
-        if values[1] in idTableItems: # check if a particular download exist
+        if tableitem_id in idTableItems: # check if a particular download exist
             rowPosition = idTableItems.index(values[1]) # update a tableitem with the rowPosition
-            self.ui.tableWidget.setItem(rowPosition, 0, QtWidgets.QTableWidgetItem(str(values[2]))) # filename
-            self.ui.tableWidget.setItem(rowPosition, 1, QtWidgets.QTableWidgetItem(str(values[3]))) # status
-            self.ui.tableWidget.setItem(rowPosition, 2, QtWidgets.QTableWidgetItem(str(values[4]))) # dimension
-            self.ui.tableWidget.setItem(rowPosition, 3, QtWidgets.QTableWidgetItem(str(values[5]))) # start_time
-            self.ui.tableWidget.setItem(rowPosition, 4, QtWidgets.QTableWidgetItem(str(values[6]))) # end_time
+            self.ui.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(str(filename)))
+            self.ui.tableWidget.setItem(0, 1, QtWidgets.QTableWidgetItem(str(status)))
+            self.ui.tableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(str(dimension)))
+            self.ui.tableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem(str(start_time)))
+            self.ui.tableWidget.setItem(0, 4, QtWidgets.QTableWidgetItem(str(end_time)))
 
             self.ui.tableWidget.resizeColumnToContents(0)
             self.ui.tableWidget.resizeColumnToContents(1)
@@ -66,12 +79,13 @@ class signalControllerHistory(QDialog):
             self.ui.tableWidget.resizeColumnToContents(3)
             self.ui.tableWidget.resizeColumnToContents(4)
 
-            self.status_array[rowPosition] = values[3] # update status
-            self.end_times[rowPosition] = values[6] # update end_time
+            self.status_array[rowPosition] = status # update status
+            self.end_times[rowPosition] = end_time # update end_time
 
 
     @QtCore.pyqtSlot(list)
     def readHistory(self, list):
+        # list contains history_items, history_status, history_end_times
         history_items = list[0]
         history_status = list[1]
         history_end_times = list[2]

@@ -59,7 +59,7 @@ class fileDownload:
                                    message="The file already exist in the folder.")
             return
 
-        # start event thread
+        # start event threads
         event_thread_pause = threading.Event()
         event_thread_pause.clear()
         event_thread_interrupt = threading.Event()

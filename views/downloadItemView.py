@@ -2,7 +2,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QWidget
 
 class downloadItemView(QWidget):
-
+    # QWidget for downloads
+    # every single download have the following values: filename, download_percentage, speed, dimension
+    # furthermore, a download have the buttons that change its status (pause, resume, interrupt, remove)
     def __init__(self, file_name, download_percentage, speed, dimension):
         super().__init__()
 
@@ -70,7 +72,7 @@ class downloadItemView(QWidget):
         self.horizontalLayout.addWidget(self.button_remove)
         self.horizontalLayout.setStretch(0, 10)
 
-        # traslate
+        # translate
         _translate = QtCore.QCoreApplication.translate
         self.label_name.setText(_translate("MainWindow", file_name))
         self.label_speed.setText(_translate("MainWindow", str(round(float(speed), 1)) + ' KB/s'))

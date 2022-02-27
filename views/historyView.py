@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_history(object):
+    # dialog for show table history
     def setupUi(self, historydialog):
 
         # historydialog
@@ -27,7 +28,7 @@ class Ui_history(object):
         font.setBold(True)
         font.setWeight(75)
 
-        # icon
+        # icon of window
         icon_mainwindow = QtGui.QIcon()
         icon_mainwindow.addPixmap(QtGui.QPixmap("../icon/download-icon-mainwindow.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         historydialog.setWindowIcon(icon_mainwindow)

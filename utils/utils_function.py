@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import filedialog
 
 def convert_size(size_bytes):
+    # Converts the number of bytes in a measure more easily readable by the user
     if size_bytes == 0:
         return "0B"
     size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
@@ -13,6 +14,7 @@ def convert_size(size_bytes):
 
 
 def chooseDirectory(initialdir):
+    # use tkinter for select the download directory to the user
     root = tk.Tk()
     root.withdraw() # use to hide tkinter window
 

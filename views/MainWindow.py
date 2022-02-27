@@ -1,9 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_mainWindow(object):
+    # Mainwindow view
     def setupUi(self, mainWindow):
 
-        # mainwindow
+        # mainwindow properties
         mainWindow.setObjectName("mainWindow")
         mainWindow.resize(900, 650)
         mainWindow.setMinimumSize(QtCore.QSize(900, 650))
@@ -14,7 +15,7 @@ class Ui_mainWindow(object):
         fontLineEdit = QtGui.QFont()
         fontLineEdit.setPointSize(8)
 
-        # icon
+        # icon of window
         icon_mainwindow = QtGui.QIcon()
         icon_mainwindow.addPixmap(QtGui.QPixmap("icon/download-icon-mainwindow.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         mainWindow.setWindowIcon(icon_mainwindow)

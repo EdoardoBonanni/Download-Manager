@@ -20,10 +20,10 @@ Just launch **main.py** with python (if you have a virtual environment, remember
 $ python3 main.py
 ```
 The MainWindow presents itself like this:
-![MainWindow.png](https://github.com/EdoardoBonanni/Download-Manager/blob/main/downloads/use-case%20MainWindow.png)
+![MainWindow.png](downloads/use-case MainWindow.png)
 
 To open the Qdialog containing the history of all downloads go to "File" -> "History" or use the shortcut Ctrl+H.
-![QDialog.png](https://github.com/EdoardoBonanni/Download-Manager/blob/main/downloads/use-case%20QDialog.png)
+![QDialog.png](downloads/use-case QDialog.png)
 
 
 ## Implementation
@@ -34,11 +34,16 @@ This application is composed by a MainWindow and a QDialog.
 The MainWindow allows you to choose the storage location, start the download after choosing the storage path and the file to download and manage the possible operations on each download (Pause, Resume, Interrupt, Restart and Remove).   
 The Qdialog maintains a persistent history of downloads that lists all completed/aborted downloads the user has executed, with statistics on time started and completed.
 
-### Model
-The model is implemented in **fileDownload.py**. 
+### Download
+The download is implemented in **fileDownload.py**. 
 This application is based on asynchronous programming, since the Download Manager must be capable of managing multiple downloads in a session.
 This class defines every single download that is managed independently by the others. 
 These objects can be created starting a download of a file or executing the restart of a previously stopped download.
+
+### Models
+**Model_MainWindow.py** defines the model relating to the signalControllerMainWindow which contains a list of download started, paused, interrupted or completed and a list of controllers of previous downloads.
+**Model_downloadItem.py** is the model of downloadItemController. It has to track all the information necessary to manage a download (including the unique ID of the download, filename, bytes reads, total bytes, information on the status of the download and a reference to the controllers that manage this element) 
+**Model_history.py** defines the model relating to the signalControllerHistory which contains list of items of table (downloads started, completed and interrupted), a list that keep the status of downloads and a list of end_times of all downloads (used for determine if download is started but not completed).
 
 ### Views
 **MainWindow.py** defines the view relating to the MainWindow which is composed of a menubar and the necessary elements to choose the storage location and start a download, moreover there is a ScrollArea where the widgets related to the downloads will be added.   

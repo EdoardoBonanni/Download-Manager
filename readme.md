@@ -19,11 +19,11 @@ Just launch **main.py** with python (if you have a virtual environment, remember
 ```bash
 $ python3 main.py
 ```
-The MainWindow presents itself like this:
-![MainWindow.png](downloads/use-case MainWindow.png)
+The MainWindow presents itself like this: <br/>
+![MainWindow.png](https://github.com/EdoardoBonanni/Download-Manager/blob/main/downloads/use-case%20MainWindow.png)
 
-To open the Qdialog containing the history of all downloads go to "File" -> "History" or use the shortcut Ctrl+H.
-![QDialog.png](downloads/use-case QDialog.png)
+To open the Qdialog containing the history of all downloads go to "File" -> "History" or use the shortcut Ctrl+H. <br/>
+![QDialog.png](https://github.com/EdoardoBonanni/Download-Manager/blob/main/downloads/use-case%20QDialog.png)
 
 
 ## Implementation

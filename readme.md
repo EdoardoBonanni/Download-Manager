@@ -42,23 +42,22 @@ These objects can be created starting a download of a file or executing the rest
 
 ### Models
 **Model_MainWindow.py** defines the model relating to the signalControllerMainWindow which contains a list of download started, paused, interrupted or completed and a list of controllers of previous downloads.
-**Model_downloadItem.py** is the model of downloadItemController. It has to track all the information necessary to manage a download (including the unique ID of the download, filename, bytes reads, total bytes, information on the status of the download and a reference to the controllers that manage this element).
-**Model_history.py** defines the model relating to the signalControllerHistory which contains list of items of table (downloads started, completed and interrupted), a list that keep the status of downloads and a list of end_times of all downloads (used for determine if download is started but not completed).
+**Model_downloadItem.py** is the model of downloadItemController. It has to track all the information necessary to manage a download (including the unique ID of the download, filename, bytes reads, total bytes, information on the status of the download and a reference to the controllers that manage this element). <br/>
+**Model_history.py** defines the model relating to the signalControllerHistory which contains list of items of table (downloads started, completed and interrupted), a list that keep the status of downloads and a list of end_times of all downloads (used for determine if download is started but not completed). <br/>
 
 ### Views
-**MainWindow.py** defines the view relating to the MainWindow which is composed of a menubar and the necessary elements to choose the storage location and start a download, moreover there is a ScrollArea where the widgets related to the downloads will be added.   
-**downloadItemView.py** is a QWidget that shows the information and progress of the download and provides the user the possibility, thanks to its controller, of changing the status of it by clicking on the following buttons: Pause, Resume, Interrupt, Restart and Remove.   
+**MainWindow.py** defines the view relating to the MainWindow which is composed of a menubar and the necessary elements to choose the storage location and start a download, moreover there is a ScrollArea where the widgets related to the downloads will be added. <br/>
+**downloadItemView.py** is a QWidget that shows the information and progress of the download and provides the user the possibility, thanks to its controller, of changing the status of it by clicking on the following buttons: Pause, Resume, Interrupt, Restart and Remove. <br/>
 **historyView.py** defines the view that contains the list of all completed/aborted downloads that the user has executed and the related statistics.  
 
 ### Controllers
-To manage downloads updates on the view I used the signals (supplied in qtcore.pyqtsignal) which are asynchronous threads that allow you to send messages containing status updates of the downloads. These messages will be sent to the controllers that will process the received information and update the views.   
+To manage downloads updates on the view I used the signals (supplied in qtcore.pyqtsignal) which are asynchronous threads that allow you to send messages containing status updates of the downloads. These messages will be sent to the controllers that will process the received information and update the views. <br/>
 I created 2 controllers with a different purpose for the MainWindow: 
     
-1. **controllerMainWindow.py** manages operations that can be made by the user on the static components of the view i.e. choose the storage location, start a download, open the list of all completed/aborted downloads and close the window;
+1. **controllerMainWindow.py** manages operations that can be made by the user on the static components of the view i.e. choose the storage location, start a download, open the list of all completed/aborted downloads and close the window; <br/>
+2. **signalControllerMainWindow.py** which updates the elements in the ScrollArea with the infomations/messages received through the signals that notify downloads updates. <br/>
 
-2. **signalControllerMainWindow.py** which updates the elements in the ScrollArea with the infomations/messages received through the signals that notify downloads updates.
-
-**downloadItemController.py** manages operations that can be performed by the user on each download i.e. Pause, Resume, Interrupt, Restart and Remove. Obviously when the user makes one of these operations, a signal will be sent to the SignalcontrollerWindow that will update the elements in the ScrollArea.  
+**downloadItemController.py** manages operations that can be performed by the user on each download i.e. Pause, Resume, Interrupt, Restart and Remove. Obviously when the user makes one of these operations, a signal will be sent to the SignalcontrollerWindow that will update the elements in the ScrollArea. <br/>
 **signalControllerHistory.py** updates the elements in the TableView with the infomations/messages received through the signals that notify downloads updates. Since the Tableview is not changeable, a controller that manages user operations on this window is not necessary.  
 
 

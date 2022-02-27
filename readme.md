@@ -42,7 +42,7 @@ These objects can be created starting a download of a file or executing the rest
 
 ### Models
 **Model_MainWindow.py** defines the model relating to the signalControllerMainWindow which contains a list of download started, paused, interrupted or completed and a list of controllers of previous downloads.
-**Model_downloadItem.py** is the model of downloadItemController. It has to track all the information necessary to manage a download (including the unique ID of the download, filename, bytes reads, total bytes, information on the status of the download and a reference to the controllers that manage this element) 
+**Model_downloadItem.py** is the model of downloadItemController. It has to track all the information necessary to manage a download (including the unique ID of the download, filename, bytes reads, total bytes, information on the status of the download and a reference to the controllers that manage this element).
 **Model_history.py** defines the model relating to the signalControllerHistory which contains list of items of table (downloads started, completed and interrupted), a list that keep the status of downloads and a list of end_times of all downloads (used for determine if download is started but not completed).
 
 ### Views

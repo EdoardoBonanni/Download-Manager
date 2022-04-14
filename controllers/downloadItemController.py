@@ -31,13 +31,13 @@ class downloadItemController(QWidget):
     def pause(self):
         # check if download is interrupted
         if self.model.event_thread_interrupt.isSet() is False:
-            # if the download is not interrupted, it resumes it after being paused
+            # if the download is not interrupted, it paused it
             self.model.event_thread_pause.set()
 
     def resume(self):
         # check if download is paused
         if self.model.event_thread_pause.isSet() is True:
-            # if it is, checj if download is interrupted
+            # if it is, check if download is interrupted
             if self.model.event_thread_interrupt.isSet() is False:
                 # if the download is not interrupted, it resumes
                 self.model.event_thread_pause.clear()
@@ -46,7 +46,7 @@ class downloadItemController(QWidget):
                 download_thread.setDaemon(True)
                 download_thread.start()
             else:
-                # else it starts again (restart)
+                # else it starts again (restart the download)
                 # reset the event threads
                 self.model.event_thread_pause.clear()
                 self.model.event_thread_interrupt.clear()
@@ -55,9 +55,9 @@ class downloadItemController(QWidget):
                 download_thread.setDaemon(True)
                 download_thread.start()
         else:
-            # if download paused, check if download is interrupted
+            # download not in pause, check if download is interrupted
             if self.model.event_thread_interrupt.isSet() is True:
-                # if it is, it starts again (restart)
+                # if it is, it starts again (restart the download)
                 # reset the event threads
                 self.model.event_thread_pause.clear()
                 self.model.event_thread_interrupt.clear()
@@ -65,6 +65,7 @@ class downloadItemController(QWidget):
                 download_thread = threading.Thread(target=lambda: self.model.fileDownload_object.restartDownload(self.model.link, self.model.dir, self.model.filename, self.model.scMW, self.model.event_thread_pause, self.model.event_thread_interrupt, self.model.uid, self.model.event_thread_remove, self.model.sch))
                 download_thread.setDaemon(True)
                 download_thread.start()
+            # if the download is not interrupted and paused, nothing is done
 
     def interrupt(self):
         # check if download is not completed
@@ -99,9 +100,10 @@ class downloadItemController(QWidget):
                 signalHistory.messageChanged.connect(self.model.sch.updateTableItem)
                 signalHistory.start()
 
-            # check if download is not interrupted
+            # check if download is interrupted
             if self.model.event_thread_interrupt.isSet() is True:
                 # if the download is interrupted, we remove the partial file from the folder
+                # (not necessary if the download is not interrupted because it is managed by the download function)
                 os.remove(self.model.dir + '/' + self.model.filename)
 
             messageHistory = None

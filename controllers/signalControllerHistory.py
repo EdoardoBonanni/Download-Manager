@@ -51,7 +51,7 @@ class signalControllerHistory(QDialog):
 
             # insert a tuple of (uid, tableitem_id, filename, dimension, start_time) in top of array = position 0
             self.model.items.insert(0, (uid, tableitem_id, filename, dimension, start_time))
-            # Because tuple is not subscriptable i need an array for every values of tableItem that can change (status and end_times)
+            # Because tuple is not subscriptable I need an array for every values of tableItem that can change (status and end_times)
             # So, I insert these values in the following lists
             self.model.status_array.insert(0, status)
             self.model.end_times.insert(0, end_time)
@@ -115,7 +115,7 @@ class signalControllerHistory(QDialog):
             end_time = history_end_times[i]
 
             # control if download was interrupted
-            if (status == 'Started' or status == 'Restarted') and end_time == 'N/A':
+            if (status == 'Started' or status == 'Paused' or status == 'Restarted') and end_time == 'N/A':
                 status = 'Interrupted'
 
             # add values to table row items

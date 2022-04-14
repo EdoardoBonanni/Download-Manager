@@ -55,7 +55,7 @@ class fileDownload:
 
         # Check if file already exist in the folder
         if os.path.isfile(dir + '/' + filename):
-            # show message box if file already exist in the folder
+            # show message box if file already exists in the folder
             messagebox.showwarning(title="Error",
                                    message="The file already exist in the folder.")
             return
@@ -167,11 +167,11 @@ class fileDownload:
                     speed = round(((dl_partial // (time.time() - start)) / 100000) / 8, 5)
 
                 else:
-                    # download remain in pause
+                    # download paused
                     paused = True
                     speed = -1
                     percentage = round(dl_total * 100. / int(total_bytes), 1)
-                    # if downloaded interrupted we update the views
+                    # if downloaded paused we update the views
                     now = datetime.now()
                     dt_string_end = now.strftime("%d/%m/%Y %H:%M:%S") # dd/mm/YY H:M:S
                     # update values of tableItem
@@ -209,8 +209,6 @@ class fileDownload:
         else:
             # download paused, waiting for a user choice
             while event_thread_pause.isSet() is True:
-                start = time.time()
-                dl_partial = 0
                 speed = -1
                 percentage = round(dl_total * 100. / int(total_bytes), 1)
                 if event_thread_remove.isSet() is True:
@@ -221,7 +219,7 @@ class fileDownload:
                     network = None
                     signal = None
                     return
-                if event_thread_interrupt.isSet() is False and event_thread_remove.isSet() is False:
+                elif event_thread_interrupt.isSet() is False and event_thread_remove.isSet() is False:
                     # download not interrupted and remove (so remain in pause)
                     message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
                     signal.emitSignal()
@@ -339,11 +337,11 @@ class fileDownload:
                     speed = round(((dl_partial // (time.time() - start)) / 100000) / 8, 5)
 
                 else:
-                    # download remain in pause
+                    # download paused
                     paused = True
                     speed = -1
                     percentage = round(dl_total * 100. / int(total_bytes), 1)
-                    # if downloaded interrupted we update the views
+                    # if downloaded paused we update the views
                     now = datetime.now()
                     dt_string_end = now.strftime("%d/%m/%Y %H:%M:%S") # dd/mm/YY H:M:S
                     # update values of tableItem
@@ -381,8 +379,6 @@ class fileDownload:
         else:
             # download paused, waiting for a user choice
             while event_thread_pause.isSet() is True:
-                start = time.time()
-                dl_partial = 0
                 speed = -1
                 percentage = round(dl_total * 100. / int(total_bytes), 1)
                 if event_thread_remove.isSet() is True:
@@ -393,7 +389,7 @@ class fileDownload:
                     network = None
                     signal = None
                     return
-                if event_thread_interrupt.isSet() is False and event_thread_remove.isSet() is False:
+                elif event_thread_interrupt.isSet() is False and event_thread_remove.isSet() is False:
                     # download not interrupted and remove (so remain in pause)
                     message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
                     signal.emitSignal()
@@ -419,7 +415,7 @@ class fileDownload:
                 time.sleep(0.2) # a little sleep
 
 
-    # For future implementation (download resume)
+    # download resumed after being paused
     def resumeDownload(self, link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, uid, event_thread_remove, sch, bytes_read, total_bytes):
         resume_header = {'Range': 'bytes=%d-' % bytes_read}
         r = requests.get(link, headers=resume_header, stream=True,  verify=False, allow_redirects=True)
@@ -455,6 +451,7 @@ class fileDownload:
         signal.start()
         signal.disconnect()
 
+        # bytes already read
         dl_total = bytes_read
         dl_partial = 0
         start = time.time()
@@ -462,7 +459,9 @@ class fileDownload:
 
         # download started
         for chunk in r.iter_content(chunk_size=256*1024):
+            # download divided in chunk
             if chunk:
+                # signal connected to MainWindow controller function that update the download values
                 signal.messageChanged.connect(scMW.updateDownloadItemValues)
 
                 if event_thread_remove.isSet() is True:
@@ -500,11 +499,11 @@ class fileDownload:
                     speed = round(((dl_partial // (time.time() - start)) / 100000) / 8, 5)
 
                 else:
-                    # download remain in pause
+                    # download paused
                     paused = True
                     speed = -1
                     percentage = round(dl_total * 100. / int(total_bytes), 1)
-                    # if downloaded interrupted we update the views
+                    # if downloaded paused we update the views
                     now = datetime.now()
                     dt_string_end = now.strftime("%d/%m/%Y %H:%M:%S") # dd/mm/YY H:M:S
                     # update values of tableItem
@@ -541,8 +540,6 @@ class fileDownload:
         else:
             # download paused, waiting for a user choice
             while event_thread_pause.isSet() is True:
-                start = time.time()
-                dl_partial = 0
                 speed = -1
                 percentage = round(dl_total * 100. / int(total_bytes), 1)
                 if event_thread_remove.isSet() is True:
@@ -553,7 +550,7 @@ class fileDownload:
                     network = None
                     signal = None
                     return
-                if event_thread_interrupt.isSet() is False and event_thread_remove.isSet() is False:
+                elif event_thread_interrupt.isSet() is False and event_thread_remove.isSet() is False:
                     # download not interrupted and remove (so remain in pause)
                     message.changeData([link, dir, filename, scMW, event_thread_pause, event_thread_interrupt, percentage, speed, file_dimension, uid, self, event_thread_remove, sch, ti, dl_total, total_bytes])
                     signal.emitSignal()

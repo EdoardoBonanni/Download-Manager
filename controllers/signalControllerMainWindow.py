@@ -39,7 +39,8 @@ class signalControllerMainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         # create downloadItemView object
         d = downloadItemView(filename, download_percentage, speed, file_dimension)
 
-        # we need downloadItemView, link, dir, filename, scMW (itself), event_thread_pause, event_thread_interrupt,  uid, fileDownload (object), event_thread_remove, sch (signalControllerHistory), tableItem (object), bytes_read, total_bytes to create downloadItemController object
+        # we need downloadItemView, link, dir, filename, scMW (itself), event_thread_pause, event_thread_interrupt,  uid, fileDownload (object), event_thread_remove, sch (signalControllerHistory), tableItem (object), bytes_read, total_bytes
+        # to create downloadItemController object
         dic = downloadItemController(d, link, dir, filename,
                                      scMW, event_thread_pause, event_thread_interrupt, uid, fileDownload, event_thread_remove,
                                      sch, tableItem, bytes_read, total_bytes)
@@ -96,8 +97,8 @@ class signalControllerMainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
                 # download active (or pause)
                 # show buttons
                 d.button_pause.show()
-                d.button_resume.show()
                 d.button_interrupt.show()
+                d.button_resume.show()
                 # check download speed
                 if 0 <= speed < 1:
                     speedKb = str(round(speed * 1000, 1)) + ' KB/s'

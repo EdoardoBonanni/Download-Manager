@@ -96,14 +96,15 @@ class signalControllerMainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
             else:
                 # download active (or pause)
                 # show buttons
-                d.button_pause.show()
+                if speed >= 0:
+                    d.button_pause.show()
                 d.button_interrupt.show()
                 d.button_resume.show()
                 # check download speed
                 if 0 <= speed < 1:
                     speedKb = str(round(speed * 1000, 1)) + ' KB/s'
                     d.label_speed.setText(speedKb) # download speed KB/s
-                elif list[7] >= 1:
+                elif speed >= 1:
                     speedMb = str(round(speed, 1)) + ' MB/s'
                     d.label_speed.setText(speedMb) # download speed MB/s
                 else:

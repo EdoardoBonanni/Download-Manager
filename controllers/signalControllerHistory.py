@@ -115,7 +115,7 @@ class signalControllerHistory(QDialog):
             end_time = history_end_times[i]
 
             # control if download was interrupted
-            if (status == 'Started' or status == 'Paused' or status == 'Restarted') and end_time == 'N/A':
+            if (status == 'Started' or status == 'Paused' or status == 'Resumed' or status == 'Restarted') and end_time == 'N/A':
                 status = 'Interrupted'
 
             # add values to table row items

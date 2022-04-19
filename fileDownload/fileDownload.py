@@ -437,7 +437,7 @@ class fileDownload:
         now = datetime.now()
         dt_string_start = now.strftime("%d/%m/%Y %H:%M:%S") # dd/mm/YY H:M:S
         tableitem_id = uuid.uuid4().fields[-1] # id univoco tableItem
-        ti = tableItem(self.uid, tableitem_id, filename, 'Restarted', file_dimension, dt_string_start, "N/A")
+        ti = tableItem(self.uid, tableitem_id, filename, 'Resumed', file_dimension, dt_string_start, "N/A")
         messageHistory = Message([ti])
         signalHistory = Signal(messageHistory)
         signalHistory.messageChanged.connect(sch.addTableItem)

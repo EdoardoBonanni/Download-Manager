@@ -77,11 +77,11 @@ class signalControllerHistory(QDialog):
             rowPosition = idTableItems.index(values[1])
 
             # add values to table row items
-            self.ui.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(str(filename)))
-            self.ui.tableWidget.setItem(0, 1, QtWidgets.QTableWidgetItem(str(status)))
-            self.ui.tableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(str(dimension)))
-            self.ui.tableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem(str(start_time)))
-            self.ui.tableWidget.setItem(0, 4, QtWidgets.QTableWidgetItem(str(end_time)))
+            self.ui.tableWidget.setItem(rowPosition, 0, QtWidgets.QTableWidgetItem(str(filename)))
+            self.ui.tableWidget.setItem(rowPosition, 1, QtWidgets.QTableWidgetItem(str(status)))
+            self.ui.tableWidget.setItem(rowPosition, 2, QtWidgets.QTableWidgetItem(str(dimension)))
+            self.ui.tableWidget.setItem(rowPosition, 3, QtWidgets.QTableWidgetItem(str(start_time)))
+            self.ui.tableWidget.setItem(rowPosition, 4, QtWidgets.QTableWidgetItem(str(end_time)))
 
             # resize columns of table
             self.ui.tableWidget.resizeColumnToContents(0)

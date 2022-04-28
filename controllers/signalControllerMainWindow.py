@@ -65,52 +65,53 @@ class signalControllerMainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         uid = list[9]
         bytes_read = list[14]
         idx = [idx for idx, item in enumerate(self.model.downloadItems) if item[1] == uid] # search index of downloadItem with a specific uid in list of tuples
-        idx = idx[0]
-        # get downloadItemView
-        d = self.model.downloadItems[idx][0]
-        # get downloadItemController
-        dic = self.model.downloadItemsControllers[idx]
-        # update bytes_read
-        dic.updateBytesRead(bytes_read)
-        # set value of progressbar with download_percentage
-        d.progressBar.setProperty("value", int(download_percentage))
-        # check type of speed variable
-        if isinstance(speed, str):
-            # speed have a str value so the download is completed
-            # download completed insert in speed label
-            d.label_speed.setText(speed)
-            # hide buttons
-            d.button_pause.hide()
-            d.button_resume.hide()
-            d.button_interrupt.hide()
-        else:
-            # check if thread is interrupted
-            if event_thread_interrupt.isSet() is True:
-                # download interrupted
-                # show only resume button
+        if len(idx) > 0: 
+            idx = idx[0]
+            # get downloadItemView
+            d = self.model.downloadItems[idx][0]
+            # get downloadItemController
+            dic = self.model.downloadItemsControllers[idx]
+            # update bytes_read
+            dic.updateBytesRead(bytes_read)
+            # set value of progressbar with download_percentage
+            d.progressBar.setProperty("value", int(download_percentage))
+            # check type of speed variable
+            if isinstance(speed, str):
+                # speed have a str value so the download is completed
+                # download completed insert in speed label
+                d.label_speed.setText(speed)
+                # hide buttons
                 d.button_pause.hide()
-                d.button_resume.show()
+                d.button_resume.hide()
                 d.button_interrupt.hide()
-                # Interrupted
-                d.label_speed.setText('Interrupted')
             else:
-                # download active (or pause)
-                # show buttons
-                if speed >= 0:
-                    d.button_pause.show()
-                d.button_interrupt.show()
-                d.button_resume.show()
-                # check download speed
-                if 0 <= speed < 1:
-                    speedKb = str(round(speed * 1000, 1)) + ' KB/s'
-                    d.label_speed.setText(speedKb) # download speed KB/s
-                elif speed >= 1:
-                    speedMb = str(round(speed, 1)) + ' MB/s'
-                    d.label_speed.setText(speedMb) # download speed MB/s
-                else:
-                    # download paused
-                    d.label_speed.setText('Paused')
+                # check if thread is interrupted
+                if event_thread_interrupt.isSet() is True:
+                    # download interrupted
+                    # show only resume button
                     d.button_pause.hide()
+                    d.button_resume.show()
+                    d.button_interrupt.hide()
+                    # Interrupted
+                    d.label_speed.setText('Interrupted')
+                else:
+                    # download active (or pause)
+                    # show buttons
+                    if speed >= 0:
+                        d.button_pause.show()
+                    d.button_interrupt.show()
+                    d.button_resume.show()
+                    # check download speed
+                    if 0 <= speed < 1:
+                        speedKb = str(round(speed * 1000, 1)) + ' KB/s'
+                        d.label_speed.setText(speedKb) # download speed KB/s
+                    elif speed >= 1:
+                        speedMb = str(round(speed, 1)) + ' MB/s'
+                        d.label_speed.setText(speedMb) # download speed MB/s
+                    else:
+                        # download paused
+                        d.label_speed.setText('Paused')
+                        d.button_pause.hide()
 
     # remove a specific downloadItem from ScrollArea
     @QtCore.pyqtSlot(list)
